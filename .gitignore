@@ -1,0 +1,4 @@
+config/escuela.json
+
+__pycache__/
+*.pyc

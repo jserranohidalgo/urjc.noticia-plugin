@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "buffer": {
+      "url": "https://mcp.buffer.com/mcp",
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer ${user_config.buffer_api_key}"
+      }
+    }
+  },
+  "userConfig": {
+    "buffer_api_key": {
+      "type": "string",
+      "title": "Clave de API de Buffer",
+      "description": "Clave personal generada en Buffer, Settings → Integrations (o inicia sesión por OAuth si lo prefieres y configura el servidor MCP de Buffer aparte, sin esta clave — ver okf/buffer.md).",
+      "sensitive": true
+    }
+  }
+}

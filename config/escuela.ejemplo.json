@@ -1,0 +1,30 @@
+{
+  "_comentario": "Copia este fichero a config/escuela.json y sustituye los valores por los de tu Escuela/Facultad. Los campos con '(URJC)' no cambian entre escuelas.",
+
+  "nombreCompleto": "Escuela Técnica Superior de Ingeniería Informática",
+  "siglas": "ETSII",
+  "kicker": "ETSII - Universidad Rey Juan Carlos",
+
+  "slugCMS": "etsii",
+  "categoriaCMS": "Actualidad ETSII",
+  "etiquetaCMS": "ETSII",
+
+  "colorMarca": "#8C6239",
+  "logo": "assets/logo-ejemplo-etsii.png",
+
+  "hashtagsBase": ["#ETSII", "#URJC"],
+
+  "carpetaLog": {
+    "windows": "C:\\Users\\<usuario>\\OneDrive - Universidad Rey Juan Carlos\\<ruta-local>\\NoticiasEtsii\\",
+    "macos": "/Users/<usuario>/Library/CloudStorage/OneDrive-UniversidadReyJuanCarlos/<ruta-local>/NoticiasEtsii/"
+  },
+
+  "_urjc_fijo": {
+    "colorMarca": "#CB0017",
+    "tipografia": "Inter (Arial/DejaVu Sans Bold como sustituta)",
+    "manualIdentidad": "https://www.urjc.es/images/Comunicacion/Manual_URJC.pdf",
+    "libroDeEstilo": "https://www.urjc.es/images/Comunicacion/Libro_de_Estilo_URJC.pdf",
+    "cmsDominio": "eris.urjc.es",
+    "webPublicaPatron": "urjc.es/<slugCMS>"
+  }
+}
