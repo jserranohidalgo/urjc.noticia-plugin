@@ -5,7 +5,7 @@
 
 .DESCRIPTION
     Dibuja directamente sobre un Bitmap con System.Drawing (no depende de Python/ImageMagick/Inkscape).
-    Pensado como alternativa al MODO FOTO del skill noticia-etsii cuando el usuario pide un "diseno"
+    Pensado como alternativa al MODO FOTO del skill noticia-urjc cuando el usuario pide un "diseno"
     en lugar de aportar una fotografia.
 
     Sigue el Manual de identidad visual de la URJC: fondo en positivo (claro), franjas graficas
@@ -38,7 +38,7 @@
 
 .PARAMETER LogoPath
     Ruta opcional a un logo PNG a superponer en la esquina superior izquierda. Si no se indica,
-    se busca automaticamente ..\assets\logo-ejemplo-etsii.png junto a este script (sustituir por
+    se busca automaticamente ..\assets\logo-ejemplo.png junto a este script (sustituir por
     el logo de la Escuela real); si no existe, se omite sin error.
 
 .EXAMPLE
@@ -78,7 +78,7 @@ if ($outDir -and -not (Test-Path -LiteralPath $outDir)) {
 }
 
 if (-not $LogoPath) {
-    $defaultLogo = Join-Path $assetsDir "logo-ejemplo-etsii.png"
+    $defaultLogo = Join-Path $assetsDir "logo-ejemplo.png"
     if (Test-Path -LiteralPath $defaultLogo) { $LogoPath = $defaultLogo }
 }
 

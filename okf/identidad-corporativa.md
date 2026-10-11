@@ -32,4 +32,4 @@ Para no releer el PDF cada vez, los valores que más se usan al generar una piez
 
 El tono de los textos sigue el Libro de estilo; el logotipo y el color, el Manual de identidad corporativa. Los
 scripts de imagen del skill (`generate-banner.py`/`.ps1`) ya implementan las franjas rojo + color de Escuela, la
-tipografía Inter empaquetada y la superposición del logo — ver [`SKILL.md`](../skills/noticia-etsii/SKILL.md).
+tipografía Inter empaquetada y la superposición del logo — ver [`SKILL.md`](../skills/noticia-urjc/SKILL.md).

@@ -91,7 +91,7 @@ def main():
     parser.add_argument("--width", type=int, default=1200)
     parser.add_argument("--height", type=int, default=800)
     parser.add_argument("--logo", default=None,
-                         help="Ruta a un logo PNG opcional (por defecto assets/logo-ejemplo-etsii.png junto al skill, "
+                         help="Ruta a un logo PNG opcional (por defecto assets/logo-ejemplo.png junto al skill, "
                               "que hay que sustituir por el de la Escuela real).")
     args = parser.parse_args()
 
@@ -103,7 +103,7 @@ def main():
 
     logo_path = args.logo
     if not logo_path:
-        default_logo = os.path.join(ASSETS_DIR, "logo-ejemplo-etsii.png")
+        default_logo = os.path.join(ASSETS_DIR, "logo-ejemplo.png")
         if os.path.isfile(default_logo):
             logo_path = default_logo
 

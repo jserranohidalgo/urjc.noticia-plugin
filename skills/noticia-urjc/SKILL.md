@@ -1,6 +1,6 @@
 ---
-name: noticia-etsii
-description: Redacta noticias para la web de una Escuela/Facultad de la URJC siguiendo exactamente el formulario "Editar ítem" del CMS (Joomla/K2) - título, texto intro (extracto breve), texto completo e imagen 1200x800 con su pie/créditos - y además los textos equivalentes para publicar la misma noticia en LinkedIn, X, BlueSky e Instagram. Usa este skill SIEMPRE que el usuario, en su rol de coordinador de una Escuela/Facultad, pida escribir, redactar, montar o preparar una noticia/artículo para la web del centro, mencione el formulario con campos Título/Texto intro/Texto completo/Imagen del ítem, o pida publicar/adaptar una noticia para redes sociales. Se invoca explícitamente con /noticia-etsii "tema de la noticia".
+name: noticia-urjc
+description: Redacta noticias para la web de una Escuela/Facultad de la URJC siguiendo exactamente el formulario "Editar ítem" del CMS (Joomla/K2) - título, texto intro (extracto breve), texto completo e imagen 1200x800 con su pie/créditos - y además los textos equivalentes para publicar la misma noticia en LinkedIn, X, BlueSky e Instagram. Usa este skill SIEMPRE que el usuario, en su rol de coordinador de una Escuela/Facultad, pida escribir, redactar, montar o preparar una noticia/artículo para la web del centro, mencione el formulario con campos Título/Texto intro/Texto completo/Imagen del ítem, o pida publicar/adaptar una noticia para redes sociales. Se invoca explícitamente con /noticia-urjc "tema de la noticia".
 ---
 
 # Noticia URJC
@@ -116,7 +116,7 @@ python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mos
   `colorMarca`) — no los inventes ni dejes el valor de ejemplo de la ETSII si la Escuela configurada es otra.
 - `--logo`/`-LogoPath` debe apuntar al logo real de la Escuela (`logo` en `config/escuela.json`). Si ese
   fichero no existe todavía, avisa al usuario de que hace falta sustituir
-  `assets/logo-ejemplo-etsii.png` por el suyo, y mientras tanto usa el de ejemplo solo para no bloquear la
+  `assets/logo-ejemplo.png` por el suyo, y mientras tanto usa el de ejemplo solo para no bloquear la
   prueba del flujo.
 - El **modo diseño** dibuja las franjas gráficas rojo (marca URJC) / color de Escuela sobre fondo blanco, no
   un degradado: usa `assets/Inter-Bold.ttf` y `assets/Inter-Medium.ttf` (empaquetadas con el skill, sin
