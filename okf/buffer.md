@@ -17,10 +17,11 @@ Este plugin lo registra en [`.mcp.json`](../.mcp.json) apuntando a `https://mcp.
 Dos vías, ninguna pasa por el SSO de la Universidad — es un proveedor de identidad propio de Buffer:
 
 - **API key personal** — la vía que usa este plugin por defecto: se genera desde la propia cuenta de Buffer en
-  *Settings → Integrations* y se configura como variable `buffer_api_key` (ver `userConfig` en
-  [`.mcp.json`](../.mcp.json)) al instalar el plugin.
+  *Settings → Integrations* y se guarda en la opción `buffer_api_key` del plugin (declarada en `userConfig` de
+  [`plugin.json`](../.claude-plugin/plugin.json)), con `/plugin configure noticia-urjc@noticia-urjc` o al
+  instalarlo. [`.mcp.json`](../.mcp.json) la usa para la cabecera `Authorization`.
 - **OAuth** (inicio de sesión de un clic, con la cuenta del cargo) — alternativa si se prefiere no guardar una
-  clave; configúralo directamente en tu propio `.mcp.json` de usuario en lugar de la variable de este plugin.
+  clave; configúralo directamente en tu propio `.mcp.json` de usuario en lugar de la opción de este plugin.
 
 ## Capacidades expuestas
 

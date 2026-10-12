@@ -11,8 +11,15 @@ Ejemplo:
 """
 import argparse
 import os
+import sys
 
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    raise SystemExit(
+        "Falta Pillow en este Python ({}). Usa otro python3 que lo tenga (p. ej. /usr/local/bin/python3 o "
+        "/opt/homebrew/bin/python3) o instálalo con: python3 -m pip install --user pillow".format(sys.executable)
+    )
 
 
 def main():

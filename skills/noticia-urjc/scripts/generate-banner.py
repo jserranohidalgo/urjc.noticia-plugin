@@ -21,8 +21,15 @@ Ejemplo:
 """
 import argparse
 import os
+import sys
 
-from PIL import Image, ImageDraw, ImageFont
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ImportError:
+    raise SystemExit(
+        "Falta Pillow en este Python ({}). Usa otro python3 que lo tenga (p. ej. /usr/local/bin/python3 o "
+        "/opt/homebrew/bin/python3) o instálalo con: python3 -m pip install --user pillow".format(sys.executable)
+    )
 
 # Color de marca de la Universidad (fijo, Manual de identidad visual URJC)
 COLOR_RED = (203, 0, 23)      # #CB0017, PANTONE 485 C

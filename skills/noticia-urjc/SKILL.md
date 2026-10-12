@@ -75,11 +75,17 @@ contenido para la web (sin redes), pregúntalo o hazlo si lo pide explícitament
 
 - Scripts de imagen (relativos a este archivo), en dos variantes equivalentes:
   - **Windows**: `scripts/resize-image.ps1` y `scripts/generate-banner.ps1` (PowerShell + System.Drawing de .NET).
-  - **macOS/Linux**: `scripts/resize-image.py` y `scripts/generate-banner.py` (Python 3 + Pillow/NumPy).
+  - **macOS/Linux**: `scripts/resize-image.py` y `scripts/generate-banner.py` (Python 3 + Pillow).
 - Antes de elegir cuál ejecutar, comprueba el sistema operativo (por ejemplo con `uname` en Bash, o mirando
   si estás operando sobre una ruta `C:\...` vs `/Users/...` o `/home/...`). En macOS/Linux no hay PowerShell
   instalado — usa siempre la variante `.py` con la herramienta Bash; en Windows usa la variante `.ps1` con
   la herramienta de PowerShell.
+- Las variantes `.py` necesitan Pillow, y el `python3` que va primero en el PATH puede no tenerlo (hay
+  equipos con varios Python instalados). Antes de usarlas, busca un intérprete que lo tenga: prueba
+  `<python> -c "import PIL"` con `python3`, `/usr/local/bin/python3` y `/opt/homebrew/bin/python3`, y usa el
+  primero que funcione en todos los comandos de imagen. Si ninguno lo tiene, propón al usuario instalarlo
+  (`python3 -m pip install --user pillow`) en vez de hacerlo por tu cuenta. `configurar-escuela.py` no lo
+  necesita: solo usa la biblioteca estándar.
 - Carpeta donde se guarda cada noticia generada (log): la de `carpetaLog` en el `escuela.json` de la Escuela.
   Si no está configurada, pregunta al usuario dónde quiere guardarlo y anótalo allí para no volver a preguntar.
 - Estas rutas pueden contener espacios y acentos: referencia siempre las rutas completas entre comillas dobles,
