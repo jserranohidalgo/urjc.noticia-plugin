@@ -16,10 +16,11 @@ cada línea o saturar el texto. Hashtags de la Escuela y la Universidad siempre 
 (`hashtagsBase` de `escuela.json` (ver [`escuela.ejemplo.json`](../config/escuela.ejemplo.json)), p. ej. `#ETSII #URJC`), más 2-4 específicos
 del tema según la red.
 
-El enlace de cada post debe apuntar, siempre que sea posible, a la URL ya publicada de la noticia en la web de
-la Escuela (no a una fuente externa). Si la noticia todavía no está publicada en el CMS, se usa un enlace
-provisional (a la fuente/evento) y se deja constancia expresa de que hay que sustituirlo por la URL definitiva
-en cuanto se publique — sin bloquear el resto del trabajo por esto.
+El enlace de cada post apunta a la URL ya publicada de la noticia en la web de la Escuela (no a una fuente
+externa): por eso **se publica primero en la web y después en redes**, y los textos de redes se redactan cuando
+ya se conoce esa URL. Solo si se decide expresamente publicar en redes antes (por ejemplo, por urgencia), se usa
+un enlace provisional (a la fuente/evento) y se deja constancia expresa de que hay que sustituirlo por la URL
+definitiva en cuanto se publique.
 
 Todas se publican (o programan) a través de **Buffer** — ver [`buffer.md`](buffer.md) para el conector y su
 techo de autonomía.

@@ -11,6 +11,10 @@ LinkedIn, X, BlueSky e Instagram, y lo deja todo guardado como log en una carpet
 copiar/pegar. El pegado real en el CMS y en las redes sociales lo hace el usuario a mano (o el agente deja el
 borrador en Buffer — ver más abajo): este skill no publica nada directamente.
 
+El orden es fijo: **primero se publica la noticia en la web de la Escuela y después, con la URL de esa
+noticia, se publica en redes**. Los posts de redes enlazan a la noticia de la web, así que no se redactan
+hasta tener su URL definitiva.
+
 ## Configuración de la Escuela
 
 Todo lo que distingue a una Escuela de otra (siglas, kicker, nombre, slug y categoría del CMS, color de marca,
@@ -68,8 +72,9 @@ Este `SKILL.md` aporta el **procedimiento**: cómo generar esos contenidos a par
 Léelos antes de escribir — no repitas aquí sus restricciones de memoria.
 
 Por defecto, toda noticia para la web se acompaña de sus versiones para redes sociales — no hace falta que el
-usuario lo pida explícitamente cada vez, es el flujo estándar. Si en algún caso el usuario solo quiere el
-contenido para la web (sin redes), pregúntalo o hazlo si lo pide explícitamente.
+usuario lo pida explícitamente cada vez, es el flujo estándar, en dos fases: web (Pasos 1-4) y, cuando la
+noticia ya está publicada, redes (Pasos 5-6). Si en algún caso el usuario solo quiere el contenido para la web
+(sin redes), pregúntalo o hazlo si lo pide explícitamente.
 
 ## Rutas importantes
 
@@ -163,29 +168,7 @@ python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mos
 En ambos modos, redacta también el **texto de créditos/pie de foto** (una frase corta describiendo la imagen,
 y si aplica, créditos del autor de la foto).
 
-## Paso 4 — Textos para redes sociales
-
-Cada noticia de la web se publica también en LinkedIn, X, BlueSky e Instagram. Redacta un texto específico
-para cada red a partir de los mismos hechos del Paso 1 y del texto completo del Paso 2 — no copies literalmente
-el texto intro en las cuatro redes: cada una tiene su propio tono, longitud y convenciones.
-
-Las restricciones de cada red —límite de caracteres, estructura, tono, hashtags— están en
-[`okf/redes-sociales.md`](../../okf/redes-sociales.md): léelas antes de escribir, incluida la verificación
-obligatoria de caracteres para X y BlueSky.
-
-Para Instagram, si el usuario quiere el encuadre exacto del feed (Instagram recorta la imagen 1200x800 a un
-formato más cuadrado/vertical), ofrece generar una versión adicional (por ejemplo 1080x1350 o 1080x1080) con
-los mismos scripts de imagen del Paso 3, pasando `--width`/`--height` (Python) o `-Width`/`-Height`
-(PowerShell) distintos.
-
-### Publicar el borrador en Buffer
-
-Si el MCP de Buffer está configurado (ver [`okf/buffer.md`](../../okf/buffer.md)), puedes dejar cada texto como
-**borrador** en la cola de Buffer, en el canal correspondiente, adjuntando la imagen si aplica. No lo programes
-ni lo publiques — ese paso es de la persona. Si el MCP no está disponible, deja los cuatro textos en el log
-(Paso 5) para que el usuario los copie y pegue a mano en Buffer o en cada red.
-
-## Paso 5 — Guardar el log
+## Paso 4 — Guardar la noticia y publicarla en la web
 
 Crea la carpeta de la noticia dentro de la carpeta base de noticias (`carpetaLog` de `escuela.json`),
 con nombre `AAAA-MM-DD-slug-del-titulo` (fecha de hoy + versión en minúsculas del título, sin acentos ni
@@ -205,44 +188,81 @@ caracteres especiales, palabras separadas por guiones). Dentro de esa carpeta gu
   ## Imagen
   Archivo: imagen-1200x800.png
   Créditos / pie de foto: <texto de créditos>
+
+  ## Publicación en la web
+  URL: <pendiente — se rellena cuando la noticia esté publicada>
   ```
 
 - El archivo de imagen final (`imagen-1200x800.png`, generado en el Paso 3).
 
-- `redes-sociales.md` — con esta estructura:
+Muestra en el chat, listos para copiar/pegar, los cuatro campos del formulario del CMS en este orden:
+**Título**, **Texto intro**, **Texto completo**, y la ruta del **archivo de imagen** junto con su **texto de
+créditos**, además de la categoría y la etiqueta (`categoriaCMS`, `etiquetaCMS`). Si hay sesión de navegador
+(ver [`okf/navegador.md`](../../okf/navegador.md)), puedes rellenar el formulario, pero el clic de publicar es
+del usuario (ver [`okf/web-cms.md`](../../okf/web-cms.md)).
 
-  ```markdown
-  # <Título> — Redes sociales
+Termina esta fase pidiendo al usuario que publique la noticia en la web y te pase su **URL** (en
+`urjc.es/<slugCMS>/...`) para preparar las redes. Indica dónde ha quedado el log. No redactes todavía los
+textos de redes.
 
-  ## LinkedIn
-  <texto>
+## Paso 5 — Textos para redes sociales, con la URL de la noticia
 
-  ## X
-  <texto>
-  (caracteres: <n>/280)
+Empieza cuando el usuario te dé la URL de la noticia publicada, en esta conversación o en otra. Si es en otra,
+busca la carpeta de la noticia en `carpetaLog` (la más reciente sin `redes-sociales.md`, o la que corresponda
+al título) y lee su `noticia.md`: los textos de redes salen de los mismos hechos.
 
-  ## BlueSky
-  <texto>
-  (caracteres: <n>/300)
+1. Comprueba que la URL está publicada: descárgala y confirma que responde y que el título coincide con el de
+   `noticia.md`. Si no carga o es de otra noticia, díselo al usuario antes de seguir.
+2. Anota la URL en la sección «Publicación en la web» de `noticia.md`.
+3. Redacta un texto específico para cada red (LinkedIn, X, BlueSky e Instagram) a partir de los hechos del
+   Paso 1 y del texto completo del Paso 2, con el enlace a esa URL. No copies literalmente el texto intro en
+   las cuatro redes: cada una tiene su propio tono, longitud y convenciones.
 
-  ## Instagram
-  <texto>
-  ```
+Las restricciones de cada red —límite de caracteres, estructura, tono, hashtags, cómo cuenta cada una el
+enlace— están en [`okf/redes-sociales.md`](../../okf/redes-sociales.md): léelas antes de escribir, incluida la
+verificación obligatoria de caracteres para X y BlueSky, que se hace ya con la URL definitiva.
 
-## Paso 6 — Resumen final para el usuario
+Para Instagram, si el usuario quiere el encuadre exacto del feed (Instagram recorta la imagen 1200x800 a un
+formato más cuadrado/vertical), ofrece generar una versión adicional (por ejemplo 1080x1350 o 1080x1080) con
+los mismos scripts de imagen del Paso 3, pasando `--width`/`--height` (Python) o `-Width`/`-Height`
+(PowerShell) distintos.
 
-Termina mostrando en el chat, de forma clara y lista para copiar/pegar:
+Si el usuario pide expresamente publicar en redes antes que en la web (por ejemplo, por urgencia), es la
+excepción: usa un enlace provisional a la fuente o al evento y, al final, recuérdale que hay que sustituirlo
+por la URL de la noticia en los cuatro textos (y en Buffer, si quedaron allí como borrador) en cuanto se
+publique.
 
-1. Los cuatro campos del formulario del CMS, en este orden: **Título**, **Texto intro**, **Texto completo**, y
-   la ruta del **archivo de imagen** junto con su **texto de créditos**.
-2. Los cuatro textos para redes sociales, en este orden: **LinkedIn**, **X** (con recuento de caracteres sobre
-   280), **BlueSky** (con recuento de caracteres sobre 300) e **Instagram**, indicando si quedaron como
-   borrador en Buffer o solo en el log.
+### Publicar el borrador en Buffer
 
-Indica también dónde ha quedado guardado el log completo (`noticia.md` y `redes-sociales.md`) por si quiere
-consultarlo más tarde.
+Si el MCP de Buffer está configurado (ver [`okf/buffer.md`](../../okf/buffer.md)), puedes dejar cada texto como
+**borrador** en la cola de Buffer, en el canal correspondiente, adjuntando la imagen si aplica. No lo programes
+ni lo publiques — ese paso es de la persona. Si el MCP no está disponible, deja los cuatro textos en el log
+(Paso 6) para que el usuario los copie y pegue a mano en Buffer o en cada red.
 
-Si los textos de redes se generaron con un enlace provisional porque la noticia todavía no estaba publicada en
-la web, termina con un recordatorio explícito: en cuanto la noticia esté publicada, hay que sustituir ese
-enlace por la URL definitiva en los cuatro textos (y en Buffer, si quedaron allí como borrador), antes de
-publicarlos.
+## Paso 6 — Guardar los textos de redes y resumen final
+
+Guarda en la carpeta de la noticia `redes-sociales.md`, con esta estructura:
+
+```markdown
+# <Título> — Redes sociales
+
+Enlace: <URL de la noticia en la web>
+
+## LinkedIn
+<texto>
+
+## X
+<texto>
+(caracteres: <n>/280)
+
+## BlueSky
+<texto>
+(caracteres: <n>/300)
+
+## Instagram
+<texto>
+```
+
+Termina mostrando en el chat, listos para copiar/pegar, los cuatro textos en este orden: **LinkedIn**, **X**
+(con recuento de caracteres sobre 280), **BlueSky** (con recuento sobre 300) e **Instagram**, indicando si
+quedaron como borrador en Buffer o solo en el log, y dónde está el log completo.
