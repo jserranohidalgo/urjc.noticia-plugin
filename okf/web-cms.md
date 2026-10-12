@@ -10,7 +10,7 @@ Las webs de Escuela/Facultad de la URJC corren sobre un gestor de contenidos Joo
 del Rectorado. Cada Escuela tiene su propia intranet de edición y su propio sitio público:
 
 - Patrón de URL: intranet `https://eris.urjc.es/<slugCMS>` · sitio público `https://urjc.es/<slugCMS>`.
-- `<slugCMS>` es el de [`config/escuela.json`](../config/escuela.json) (`etsii` en el ejemplo).
+- `<slugCMS>` es el de `escuela.json` (ver [`escuela.ejemplo.json`](../config/escuela.ejemplo.json)) (`etsii` en el ejemplo).
 - **Requiere VPN** de la Universidad si se accede desde fuera del campus.
 - Recomendación: editar el HTML directamente, no el editor WYSIWYG de Joomla.
 

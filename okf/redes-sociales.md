@@ -13,7 +13,7 @@ de forma distinta entre un texto y otro.
 
 Reparte 2-6 emoticonos que refuercen el contenido (🎓 🚀 📢 🔬 🏆 🌍 según encaje con el tema); evita ponerlos en
 cada línea o saturar el texto. Hashtags de la Escuela y la Universidad siempre presentes
-(`hashtagsBase` de [`config/escuela.json`](../config/escuela.json), p. ej. `#ETSII #URJC`), más 2-4 específicos
+(`hashtagsBase` de `escuela.json` (ver [`escuela.ejemplo.json`](../config/escuela.ejemplo.json)), p. ej. `#ETSII #URJC`), más 2-4 específicos
 del tema según la red.
 
 El enlace de cada post debe apuntar, siempre que sea posible, a la URL ya publicada de la noticia en la web de

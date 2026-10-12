@@ -1,6 +1,7 @@
 {
-  "_comentario": "Copia este fichero a config/escuela.json y sustituye los valores por los de tu Escuela/Facultad. Los campos con '(URJC)' no cambian entre escuelas.",
+  "_comentario": "Ejemplo de los campos de escuela.json (el de la ETSII). No hace falta copiarlo: el skill genera el de cada Escuela a partir de su página en urjc.es (scripts/configurar-escuela.py) y lo guarda en ~/.config/noticia-urjc/<slug>/escuela.json. Los campos de _urjc_fijo no cambian entre escuelas.",
 
+  "url": "https://www.urjc.es/etsii",
   "nombreCompleto": "Escuela Técnica Superior de Ingeniería Informática",
   "siglas": "ETSII",
   "kicker": "ETSII - Universidad Rey Juan Carlos",
@@ -10,14 +11,11 @@
   "etiquetaCMS": "ETSII",
 
   "colorMarca": "#8C6239",
-  "logo": "assets/logo-ejemplo.png",
+  "logo": "~/.config/noticia-urjc/etsii/logo.png",
 
   "hashtagsBase": ["#ETSII", "#URJC"],
 
-  "carpetaLog": {
-    "windows": "C:\\Users\\<usuario>\\OneDrive - Universidad Rey Juan Carlos\\<ruta-local>\\NoticiasEtsii\\",
-    "macos": "/Users/<usuario>/Library/CloudStorage/OneDrive-UniversidadReyJuanCarlos/<ruta-local>/NoticiasEtsii/"
-  },
+  "carpetaLog": "~/Documents/NoticiasETSII",
 
   "_urjc_fijo": {
     "colorMarca": "#CB0017",

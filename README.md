@@ -13,10 +13,10 @@ Las reglas y procedimientos que usa el skill están en [`okf/`](okf/index.md), u
 .claude-plugin/marketplace.json ← marketplace de un solo plugin (para instalarlo)
 .mcp.json                    ← registra el MCP remoto de Buffer
 config/
-  escuela.ejemplo.json       ← plantilla de configuración por Escuela
+  escuela.ejemplo.json       ← ejemplo de los campos de configuración de una Escuela
 skills/noticia-urjc/
   SKILL.md                   ← el procedimiento (invocable con /noticia-urjc)
-  scripts/                   ← generación/recorte de imagen (Python y PowerShell)
+  scripts/                   ← configuración desde la web y generación/recorte de imagen
   assets/                    ← tipografía Inter + logo de ejemplo
 okf/
   index.md, identidad-corporativa.md, web-cms.md, redes-sociales.md,
@@ -34,14 +34,18 @@ okf/
        claude plugin install noticia-urjc --marketplace /ruta/a/urjc.noticia-plugin
 
    (Si solo quieres el skill, sin el MCP de Buffer, enlaza `skills/noticia-urjc` en `.claude/skills/`.)
-2. Copia `config/escuela.ejemplo.json` a `config/escuela.json` (no se versiona — cada Escuela tiene el suyo) y
-   rellena al menos:
-   - `siglas`, `kicker`, `nombreCompleto`
-   - `slugCMS`, `categoriaCMS`, `etiquetaCMS` (los de tu web Joomla/K2)
-   - `colorMarca` (hex, la gama cromática de tu Escuela) y `logo` (ruta a tu logotipo)
-   - `hashtagsBase` y `carpetaLog` (dónde guardar el log de cada noticia)
-3. Sustituye `skills/noticia-urjc/assets/logo-ejemplo.png` por el logotipo de tu Escuela (mismo nombre
-   de fichero, o cambia la ruta en `config/escuela.json`).
+2. Configura tu Escuela dándole al skill su página en urjc.es:
+
+       /noticia-urjc https://www.urjc.es/<tu-escuela>
+
+   El skill saca de esa página las siglas, el nombre, el slug y la categoría del CMS, los hashtags, el
+   logotipo y el color de marca (el del logotipo), te los enseña para que los confirmes y los guarda en
+   `~/.config/noticia-urjc/<slug>/` (`escuela.json` y el logo). Esa carpeta está fuera del plugin, así que la
+   configuración se mantiene al actualizarlo. Las siguientes veces la reutiliza sin preguntar; si configuras
+   varias Escuelas, te pregunta cuál usar. Para convertir el logo a PNG hace falta `rsvg-convert`
+   (`brew install librsvg`), ImageMagick o `inkscape`; en macOS, si no hay ninguno, usa Quick Look.
+3. Revisa los valores que el skill no puede saber por la web: la carpeta donde guardar el log de cada noticia
+   (`carpetaLog`) y, la primera vez que rellenes el formulario, la categoría y la etiqueta del CMS.
 4. Configura el acceso a Buffer: el plugin declara la opción `buffer_api_key` (en `plugin.json`). Genera una
    clave personal en Buffer, *Settings → Integrations*, y guárdala con
    `/plugin configure noticia-urjc@noticia-urjc` (o al instalar, con `--config buffer_api_key=…`). Si prefieres

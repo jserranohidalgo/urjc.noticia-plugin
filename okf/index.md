@@ -10,7 +10,8 @@ Este bundle documenta, de forma independiente, lo que el skill [`noticia-urjc`](
 necesita saber para hacer su trabajo. Las cosas se documentan como **restricciones de un medio** y
 **procedimientos para operarlo**.
 
-Lo que varía de una Escuela a otra de la URJC vive en [`config/escuela.json`](../config/escuela.json) (copiado de
+Lo que varía de una Escuela a otra de la URJC vive en el `escuela.json` de cada Escuela
+(`~/.config/noticia-urjc/<slug>/`, generado a partir de su página web; campos en
 [`escuela.ejemplo.json`](../config/escuela.ejemplo.json)), no aquí: estos documentos son el conocimiento común a
 cualquier Escuela que use el mismo CMS y la misma cuenta de Buffer.
 

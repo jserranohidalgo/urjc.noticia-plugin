@@ -1,6 +1,6 @@
 ---
 name: noticia-urjc
-description: Redacta noticias para la web de una Escuela/Facultad de la URJC siguiendo exactamente el formulario "Editar ítem" del CMS (Joomla/K2) - título, texto intro (extracto breve), texto completo e imagen 1200x800 con su pie/créditos - y además los textos equivalentes para publicar la misma noticia en LinkedIn, X, BlueSky e Instagram. Usa este skill SIEMPRE que el usuario, en su rol de coordinador de una Escuela/Facultad, pida escribir, redactar, montar o preparar una noticia/artículo para la web del centro, mencione el formulario con campos Título/Texto intro/Texto completo/Imagen del ítem, o pida publicar/adaptar una noticia para redes sociales. Se invoca explícitamente con /noticia-urjc "tema de la noticia".
+description: Redacta noticias para la web de una Escuela/Facultad de la URJC siguiendo exactamente el formulario "Editar ítem" del CMS (Joomla/K2) - título, texto intro (extracto breve), texto completo e imagen 1200x800 con su pie/créditos - y además los textos equivalentes para publicar la misma noticia en LinkedIn, X, BlueSky e Instagram. Usa este skill SIEMPRE que el usuario, en su rol de coordinador de una Escuela/Facultad, pida escribir, redactar, montar o preparar una noticia/artículo para la web del centro, mencione el formulario con campos Título/Texto intro/Texto completo/Imagen del ítem, o pida publicar/adaptar una noticia para redes sociales. Se invoca explícitamente con /noticia-urjc "tema de la noticia", o con /noticia-urjc <URL de la Escuela en urjc.es> para configurar una Escuela.
 ---
 
 # Noticia URJC
@@ -13,17 +13,50 @@ borrador en Buffer — ver más abajo): este skill no publica nada directamente.
 
 ## Configuración de la Escuela
 
-Antes de redactar nada, comprueba que existe `config/escuela.json` junto a este skill (al nivel del plugin,
-`../../config/escuela.json`). Si no existe, cópialo de `escuela.ejemplo.json` y pídele al usuario que rellene
-al menos `siglas`, `kicker`, `slugCMS`, `categoriaCMS`, `colorMarca` y `logo` antes de continuar — son los
-datos que distinguen a su Escuela del resto. Usa esos valores en todos los pasos siguientes; no asumas los de
-ETSII del fichero de ejemplo.
+Todo lo que distingue a una Escuela de otra (siglas, kicker, nombre, slug y categoría del CMS, color de marca,
+logotipo, hashtags, carpeta del log) está en un `escuela.json` **fuera del plugin**, en
+`~/.config/noticia-urjc/<slug>/escuela.json`, junto con el logotipo de la Escuela (`logo.svg` y `logo.png`).
+Así no se pierde al actualizar el plugin y puede haber una configuración por cada Escuela.
+
+Antes de redactar nada, decide qué Escuela usar:
+
+1. Si el usuario da la página de una Escuela (`https://www.urjc.es/<slug>` o solo el slug), usa esa. Si ya
+   existe su configuración, reutilízala; genérala de nuevo solo si el usuario lo pide.
+2. Si no la da, mira qué hay en `~/.config/noticia-urjc/*/escuela.json`: si hay una, úsala; si hay varias,
+   pregunta cuál.
+3. Si no hay ninguna, pide la URL de la página de la Escuela en urjc.es.
+
+Para generar la configuración a partir de la página, ejecuta (Python 3, solo biblioteca estándar):
+
+```bash
+python3 "<ruta-al-skill>/scripts/configurar-escuela.py" "https://www.urjc.es/<slug>"
+```
+
+El script imprime el `escuela.json` generado y avisa (por stderr) de lo que no ha podido deducir. Saca:
+
+- `siglas` y `kicker` del `<title>` de la página («ETSII - Universidad Rey Juan Carlos»).
+- `nombreCompleto` del bloque de contacto de la portada.
+- `logo` del logotipo de la cabecera (`/images/facultades/logos/logo-<slug>.svg`), convertido a PNG.
+- `colorMarca` del SVG del logotipo: el color que no es el rojo URJC ni un neutro.
+- `slugCMS` de la URL, y `categoriaCMS`/`etiquetaCMS` por convención («Actualidad <SIGLAS>» / «<SIGLAS>»).
+- `hashtagsBase` de las siglas (`#<SIGLAS> #URJC`), y `carpetaLog` con un valor por defecto
+  (`~/Documents/Noticias<SIGLAS>`).
+
+Enséñale al usuario los valores y el logotipo antes de seguir, y corrige en el `escuela.json` lo que haga
+falta. Fíjate sobre todo en `nombreCompleto` (la web a veces lo escribe distinto que el logotipo), en
+`carpetaLog` (es personal) y en `categoriaCMS`/`etiquetaCMS` (confírmalas en el desplegable del CMS la primera
+vez que rellenes el formulario). Si el script no puede ejecutarse (por ejemplo, Windows sin Python), sigue los
+mismos pasos a mano: descarga la página y el logotipo, deduce los campos como se describe arriba y escribe el
+`escuela.json` en la misma ruta (`%USERPROFILE%\.config\noticia-urjc\<slug>\` en Windows). Los campos
+están descritos en [`config/escuela.ejemplo.json`](../../config/escuela.ejemplo.json).
+
+Usa esos valores en todos los pasos siguientes; no asumas los de la ETSII del fichero de ejemplo.
 
 ## Base de conocimiento
 
 Las restricciones de cada medio —campos del CMS, límites de caracteres, estructura, tono— están en
-[`okf/`](../../okf/index.md), un bundle de referencia que no cambia entre Escuelas (lo que sí cambia está en
-`config/escuela.json`):
+[`okf/`](../../okf/index.md), un bundle de referencia que no cambia entre Escuelas (lo que sí cambia está en el
+`escuela.json` de la Escuela):
 
 - [`okf/web-cms.md`](../../okf/web-cms.md) — el formulario de la web y cómo llegar a él.
 - [`okf/redes-sociales.md`](../../okf/redes-sociales.md) — restricciones de LinkedIn, X, BlueSky e Instagram.
@@ -47,9 +80,8 @@ contenido para la web (sin redes), pregúntalo o hazlo si lo pide explícitament
   si estás operando sobre una ruta `C:\...` vs `/Users/...` o `/home/...`). En macOS/Linux no hay PowerShell
   instalado — usa siempre la variante `.py` con la herramienta Bash; en Windows usa la variante `.ps1` con
   la herramienta de PowerShell.
-- Carpeta donde se guarda cada noticia generada (log): la de `carpetaLog` en `config/escuela.json`, con ruta
-  distinta según el equipo (Windows/macOS). Si no está configurada, pregunta al usuario dónde quiere guardarlo
-  la primera vez y sugiere anotarlo en `config/escuela.json` para no volver a preguntar.
+- Carpeta donde se guarda cada noticia generada (log): la de `carpetaLog` en el `escuela.json` de la Escuela.
+  Si no está configurada, pregunta al usuario dónde quiere guardarlo y anótalo allí para no volver a preguntar.
 - Estas rutas pueden contener espacios y acentos: referencia siempre las rutas completas entre comillas dobles,
   tanto en PowerShell como en Bash.
 
@@ -101,23 +133,21 @@ recorte centrado puede cortar cabezas o elementos importantes si la foto origina
 
 ```powershell
 # Windows (PowerShell)
-powershell -ExecutionPolicy Bypass -File "<ruta-al-skill>\scripts\generate-banner.ps1" -Title "<texto corto a mostrar>" -Kicker "<kicker de config/escuela.json>" -BrandColor "<colorMarca de config/escuela.json>" -LogoPath "<ruta-al-logo-de-la-escuela>" -OutputPath "<carpeta-noticia>\imagen-1200x800.png"
+powershell -ExecutionPolicy Bypass -File "<ruta-al-skill>\scripts\generate-banner.ps1" -Title "<texto corto a mostrar>" -Kicker "<kicker de escuela.json>" -BrandColor "<colorMarca de escuela.json>" -LogoPath "<ruta-al-logo-de-la-escuela>" -OutputPath "<carpeta-noticia>\imagen-1200x800.png"
 ```
 
 ```bash
 # macOS/Linux (Bash)
-python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mostrar>" --kicker "<kicker de config/escuela.json>" --brand-color "<colorMarca de config/escuela.json>" --logo "<ruta-al-logo-de-la-escuela>" --output "<carpeta-noticia>/imagen-1200x800.png"
+python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mostrar>" --kicker "<kicker de escuela.json>" --brand-color "<colorMarca de escuela.json>" --logo "<ruta-al-logo-de-la-escuela>" --output "<carpeta-noticia>/imagen-1200x800.png"
 ```
 
 - `--title`/`-Title` no tiene por qué ser el título completo de la noticia si es muy largo: usa una versión
   corta que quepa bien (el script autoajusta el tamaño de letra y hace wrap, pero un texto muy largo queda
   pequeño). Cuatro o cinco palabras clave suelen funcionar mejor que la frase completa.
-- `--kicker`/`-Kicker` y `--brand-color`/`-BrandColor` deben venir de `config/escuela.json` (`kicker` y
+- `--kicker`/`-Kicker` y `--brand-color`/`-BrandColor` deben venir de `escuela.json` (`kicker` y
   `colorMarca`) — no los inventes ni dejes el valor de ejemplo de la ETSII si la Escuela configurada es otra.
-- `--logo`/`-LogoPath` debe apuntar al logo real de la Escuela (`logo` en `config/escuela.json`). Si ese
-  fichero no existe todavía, avisa al usuario de que hace falta sustituir
-  `assets/logo-ejemplo.png` por el suyo, y mientras tanto usa el de ejemplo solo para no bloquear la
-  prueba del flujo.
+- `--logo`/`-LogoPath` debe apuntar al logotipo en PNG de la Escuela (`logo` en `escuela.json`). Si no hay
+  PNG (el script no encontró conversor de SVG), conviértelo antes o genera el banner sin logo y avísalo.
 - El **modo diseño** dibuja las franjas gráficas rojo (marca URJC) / color de Escuela sobre fondo blanco, no
   un degradado: usa `assets/Inter-Bold.ttf` y `assets/Inter-Medium.ttf` (empaquetadas con el skill, sin
   instalación) para el titular y el texto de cabecera. Si esos ficheros faltaran, la variante Python cae en
@@ -151,7 +181,7 @@ ni lo publiques — ese paso es de la persona. Si el MCP no está disponible, de
 
 ## Paso 5 — Guardar el log
 
-Crea la carpeta de la noticia dentro de la carpeta base de noticias (`carpetaLog` de `config/escuela.json`),
+Crea la carpeta de la noticia dentro de la carpeta base de noticias (`carpetaLog` de `escuela.json`),
 con nombre `AAAA-MM-DD-slug-del-titulo` (fecha de hoy + versión en minúsculas del título, sin acentos ni
 caracteres especiales, palabras separadas por guiones). Dentro de esa carpeta guarda:
 

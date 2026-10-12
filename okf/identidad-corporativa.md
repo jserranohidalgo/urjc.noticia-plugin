@@ -25,7 +25,7 @@ Para no releer el PDF cada vez, los valores que más se usan al generar una piez
 
 - **Color de marca de la Universidad** (fijo, igual en todas las Escuelas): blanco `#FFFFFF`, negro `#000000` y rojo `#CB0017` (PANTONE 485 C) — los tres válidos en RGB/hexadecimal para entornos digitales.
 - **Tipografía**: **Inter** (pesos Light/Regular/Medium/Bold, descargable en Google Fonts) para comunicaciones digitales e impresas; **Arial** como sustituta en documentos que se comparten o editan fuera de la Universidad, o donde no se pueda incluir una tipografía propia.
-- **Cada Facultad y Escuela tiene su propia gama cromática**, además del rojo de marca — se toma del logotipo de cada centro (no hay una lista textual de todas las gamas en el Manual). Este valor es el `colorMarca` de [`config/escuela.json`](../config/escuela.json); el de ejemplo (ETSII) es el marrón/ocre `#8C6239` de su logotipo.
+- **Cada Facultad y Escuela tiene su propia gama cromática**, además del rojo de marca — se toma del logotipo de cada centro (no hay una lista textual de todas las gamas en el Manual). Este valor es el `colorMarca` de `escuela.json` (ver [`escuela.ejemplo.json`](../config/escuela.ejemplo.json)); el de ejemplo (ETSII) es el marrón/ocre `#8C6239` de su logotipo.
 - **El recurso visual distintivo son las «franjas gráficas»**: bandas de color, no ilustraciones temáticas, las que jerarquizan la información y dan dinamismo a un layout. Es el principio a seguir en banners e infografías, en vez de motivos narrativos propios (una metáfora, un diagrama temático).
 
 ## Cómo se aplica
