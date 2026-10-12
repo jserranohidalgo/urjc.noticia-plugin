@@ -1,16 +1,14 @@
 ---
 type: Index
 title: Base de conocimiento del plugin noticia-urjc
-description: Bundle OKF con las reglas y procedimientos que el skill noticia-urjc necesita para redactar y publicar noticias de una Escuela/Facultad de la URJC, extraídas del modelo Speech de etsii.profesion y reescritas sin esa capa — solo constricciones y procedimientos.
+description: Bundle OKF con las reglas y procedimientos que el skill noticia-urjc necesita para redactar y publicar noticias de una Escuela/Facultad de la URJC, documentadas como restricciones y procedimientos.
 ---
 
 # Base de conocimiento
 
 Este bundle documenta, de forma independiente, lo que el skill [`noticia-urjc`](../skills/noticia-urjc/SKILL.md)
-necesita saber para hacer su trabajo. No presupone el modelo Speech de
-[`etsii.profesion`](https://github.com/jserranohidalgo/etsii.profesion), de donde se extrajo originalmente: aquí
-las cosas se documentan como **restricciones de un medio** y **procedimientos para operarlo**, no como actos de
-habla ni recursos de un metamodelo.
+necesita saber para hacer su trabajo. Las cosas se documentan como **restricciones de un medio** y
+**procedimientos para operarlo**.
 
 Lo que varía de una Escuela a otra de la URJC vive en [`config/escuela.json`](../config/escuela.json) (copiado de
 [`escuela.ejemplo.json`](../config/escuela.ejemplo.json)), no aquí: estos documentos son el conocimiento común a
