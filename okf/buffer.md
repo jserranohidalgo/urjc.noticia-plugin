@@ -10,18 +10,24 @@ Gestor centralizado de redes sociales. A diferencia de la web del CMS (que se op
 [`navegador.md`](navegador.md)), Buffer publica un **servidor MCP remoto y oficial**: el propio servicio expone
 un canal de agente de primera clase, sin necesidad de automatizar un navegador ni de una sesión dedicada.
 
-Este plugin lo registra en [`.mcp.json`](../.mcp.json) apuntando a `https://mcp.buffer.com/mcp`.
+Este plugin lo registra en [`.mcp.json`](../.mcp.json) apuntando a `https://mcp.buffer.com/mcp`, sin credenciales (OAuth).
 
 ## Autenticación
 
 Dos vías, ninguna pasa por el SSO de la Universidad — es un proveedor de identidad propio de Buffer:
 
-- **API key personal** — la vía que usa este plugin por defecto: se genera desde la propia cuenta de Buffer en
-  *Settings → Integrations* y se guarda en la opción `buffer_api_key` del plugin (declarada en `userConfig` de
-  [`plugin.json`](../.claude-plugin/plugin.json)), con `/plugin configure noticia-urjc@noticia-urjc` o al
-  instalarlo. [`.mcp.json`](../.mcp.json) la usa para la cabecera `Authorization`.
-- **OAuth** (inicio de sesión de un clic, con la cuenta del cargo) — alternativa si se prefiere no guardar una
-  clave; configúralo directamente en tu propio `.mcp.json` de usuario en lugar de la opción de este plugin.
+- **OAuth** — la vía por defecto de este plugin y la que documenta Buffer en su
+  [guía para Claude](https://developers.buffer.com/guides/integrations/claude.html). El servidor de
+  [`.mcp.json`](../.mcp.json) no lleva credenciales: se autentica desde Claude Code con `/mcp` → *buffer* →
+  *Authenticate*, iniciando sesión en Buffer con la cuenta de la Escuela y aprobando el acceso. Claude Code
+  guarda el permiso; no hay que copiar nada. Si caduca, se repite el mismo paso.
+- **API key personal** — alternativa, para quien prefiera una clave con nombre y caducidad. Se genera en
+  **https://publish.buffer.com/settings/api** (*Settings → API*), copiándola en el momento porque normalmente
+  solo se muestra una vez, y se registra como servidor propio del usuario:
+  `claude mcp add --scope user --transport http buffer-api https://mcp.buffer.com/mcp --header "Authorization: Bearer <clave>"`.
+  Si ese servidor falla con un 401 («Invalid or expired token»), la clave está mal copiada o ha caducado.
+
+Basta con una de las dos: el skill usa las herramientas del servidor de Buffer que esté conectado.
 
 ## Capacidades expuestas
 
@@ -43,4 +49,29 @@ Buffer (programar es indistinguible de publicar, porque no queda ningún paso hu
 
 Los canales conectados (qué cuenta de X, LinkedIn, Instagram, etc.) son configuración de la propia cuenta de
 Buffer, no de este plugin — se gestionan desde la interfaz web de Buffer. El plan gratuito limita a 3 canales
-simultáneos.
+simultáneos. Sus id se guardan una vez en el bloque `buffer` del `escuela.json` de la Escuela (`organizacion` y
+`canales`), para no tener que buscarlos en cada noticia.
+
+## Adjuntos: imágenes y vídeos
+
+El MCP de Buffer no sube ficheros: cada adjunto es una **URL pública de descarga directa** (no una ruta local, ni
+una página para compartir, ni un enlace que caduque). Por eso:
+
+- **Imagen**: la de la noticia ya publicada en la web (`/media/k2/items/cache/<hash>_XL.jpg`), que es pública.
+- **Vídeo**: se sube al OneDrive **personal de quien usa el plugin** (la cuenta de su `usuario.json`) con
+  [`subir-onedrive.sh`](../skills/noticia-urjc/scripts/buffer/subir-onedrive.sh), que crea un vínculo de solo
+  lectura para cualquier persona y devuelve la URL `<sitio>/personal/<cuenta>/_layouts/15/download.aspx?share=<token>`.
+  Esa forma descarga el fichero sin sesión ni cookies; el vínculo de compartir normal (`/:v:/g/…`) y su variante
+  `?download=1` necesitan cookies y Buffer recibe un 403. El script sube por la API de SharePoint, por trozos de
+  8 MB, a la carpeta `onedrive.carpeta` de «Mis archivos» (por defecto `noticia-urjc`). Una vez publicadas las redes, se puede quitar el acceso
+  público: Buffer y las redes ya tienen su copia.
+
+Restricciones por red al adjuntar (comprobadas en octubre de 2026):
+
+- **Instagram** exige imagen o vídeo; con vídeo va como **reel** (`type: reel`, `shouldShareToFeed: true`).
+- **BlueSky** limita los vídeos a 100 MB; si el vídeo pesa más, el post va solo con el enlace.
+- **LinkedIn y X** aceptan el vídeo; sin vídeo, van solo con el enlace de la noticia (tarjeta de vista previa).
+- Al editar un post (`edit_post`), Buffer lo valida entero: hay que volver a mandar el texto y los adjuntos.
+
+Todo esto lo aplica [`preparar-buffer.py`](../skills/noticia-urjc/scripts/buffer/preparar-buffer.py), que
+genera los argumentos exactos de `create_post` para cada red.

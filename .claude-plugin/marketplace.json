@@ -1,5 +1,6 @@
 {
   "name": "noticia-urjc",
+  "description": "Plugin de Claude Code para redactar y publicar noticias de las Escuelas y Facultades de la URJC en su web y en redes sociales.",
   "owner": {
     "name": "Juan Manuel Serrano"
   },

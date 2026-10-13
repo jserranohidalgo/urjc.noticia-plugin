@@ -98,8 +98,8 @@ def main():
     parser.add_argument("--width", type=int, default=1200)
     parser.add_argument("--height", type=int, default=800)
     parser.add_argument("--logo", default=None,
-                         help="Ruta a un logo PNG opcional (por defecto assets/logo-ejemplo.png junto al skill, "
-                              "que hay que sustituir por el de la Escuela real).")
+                         help="Ruta al logo PNG de la Escuela (el 'logo' de su escuela.json). Si no se indica, "
+                              "el banner se genera sin logo.")
     args = parser.parse_args()
 
     width, height = args.width, args.height
@@ -109,10 +109,6 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
 
     logo_path = args.logo
-    if not logo_path:
-        default_logo = os.path.join(ASSETS_DIR, "logo-ejemplo.png")
-        if os.path.isfile(default_logo):
-            logo_path = default_logo
 
     bg = Image.new("RGB", (width, height), COLOR_PAPER)
     draw = ImageDraw.Draw(bg)

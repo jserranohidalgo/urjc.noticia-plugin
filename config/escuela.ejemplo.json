@@ -1,22 +1,29 @@
 {
-  "_comentario": "Ejemplo de los campos de escuela.json (el de la ETSII). No hace falta copiarlo: el skill genera el de cada Escuela a partir de su página en urjc.es (scripts/configurar-escuela.py) y lo guarda en ~/.config/noticia-urjc/<slug>/escuela.json. Los campos de _urjc_fijo no cambian entre escuelas.",
-
+  "_comentario": "Ejemplo de los campos de escuela.json (el de la ETSII): solo lo que es de la Escuela. No hace falta copiarlo: el skill genera el de cada Escuela a partir de su página en urjc.es (scripts/configurar-escuela.py) y lo guarda en ~/.config/noticia-urjc/<slug>/escuela.json. buffer (id de la organización y de los canales de la cuenta de Buffer de la Escuela) se rellena la primera vez que se suben borradores. Lo personal (tu cuenta, tu navegador, tu OneDrive) va aparte, en ~/.config/noticia-urjc/usuario.json (ver usuario.ejemplo.json). Los campos de _urjc_fijo no cambian entre escuelas.",
   "url": "https://www.urjc.es/etsii",
   "nombreCompleto": "Escuela Técnica Superior de Ingeniería Informática",
   "siglas": "ETSII",
   "kicker": "ETSII - Universidad Rey Juan Carlos",
-
   "slugCMS": "etsii",
   "categoriaCMS": "Actualidad ETSII",
   "etiquetaCMS": "ETSII",
-
   "colorMarca": "#8C6239",
   "logo": "~/.config/noticia-urjc/etsii/logo.png",
-
-  "hashtagsBase": ["#ETSII", "#URJC"],
-
+  "hashtagsBase": [
+    "#ETSII",
+    "#URJC"
+  ],
   "carpetaLog": "~/Documents/NoticiasETSII",
-
+  "buffer": {
+    "cuenta": "<cuenta-de-buffer>@urjc.es",
+    "organizacion": "<id de get_account>",
+    "canales": {
+      "linkedin": "<id>",
+      "twitter": "<id>",
+      "instagram": "<id>",
+      "bluesky": "<id, si está conectado>"
+    }
+  },
   "_urjc_fijo": {
     "colorMarca": "#CB0017",
     "tipografia": "Inter (Arial/DejaVu Sans Bold como sustituta)",

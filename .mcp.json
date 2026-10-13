@@ -1,11 +1,8 @@
 {
   "mcpServers": {
     "buffer": {
-      "url": "https://mcp.buffer.com/mcp",
       "type": "http",
-      "headers": {
-        "Authorization": "Bearer ${user_config.buffer_api_key}"
-      }
+      "url": "https://mcp.buffer.com/mcp"
     }
   }
 }

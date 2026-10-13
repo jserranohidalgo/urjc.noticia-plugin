@@ -1,0 +1,12 @@
+{
+  "_comentario": "Configuración personal de quien usa el plugin, común a todas las Escuelas: se guarda en ~/.config/noticia-urjc/usuario.json. cuenta: tu cuenta de la URJC (la que tiene permiso de editor de la web de la Escuela y cuyo OneDrive se usa para subir vídeos para Buffer). navegador: tu perfil de Chrome (~/chrome-<parte local de la cuenta>) y un puerto CDP fijo para él. onedrive: el sitio de OneDrive de la organización y la carpeta de «Mis archivos» donde se suben los ficheros. El skill lo pregunta y lo guarda la primera vez que lo necesita.",
+  "cuenta": "<tu-cuenta>@urjc.es",
+  "navegador": {
+    "perfil": "~/chrome-<tu-cuenta>",
+    "puerto": 9223
+  },
+  "onedrive": {
+    "sitio": "https://urjc-my.sharepoint.com",
+    "carpeta": "noticia-urjc"
+  }
+}

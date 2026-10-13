@@ -37,9 +37,8 @@
     Alto en pixeles, por defecto 800.
 
 .PARAMETER LogoPath
-    Ruta opcional a un logo PNG a superponer en la esquina superior izquierda. Si no se indica,
-    se busca automaticamente ..\assets\logo-ejemplo.png junto a este script (sustituir por
-    el logo de la Escuela real); si no existe, se omite sin error.
+    Ruta al logo PNG de la Escuela (el 'logo' de su escuela.json), a superponer en la esquina
+    superior izquierda. Si no se indica o no existe, el banner se genera sin logo.
 
 .EXAMPLE
     powershell -ExecutionPolicy Bypass -File generate-banner.ps1 -Title "La Escuela acoge la final del hackathon" -Kicker "ETSII - Universidad Rey Juan Carlos" -BrandColor "#8C6239" -LogoPath "C:\ruta\logo-escuela.png" -OutputPath "C:\salida\banner.png"
@@ -75,11 +74,6 @@ $assetsDir = Join-Path (Split-Path -Parent $PSScriptRoot) "assets"
 $outDir = Split-Path -Parent $OutputPath
 if ($outDir -and -not (Test-Path -LiteralPath $outDir)) {
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-}
-
-if (-not $LogoPath) {
-    $defaultLogo = Join-Path $assetsDir "logo-ejemplo.png"
-    if (Test-Path -LiteralPath $defaultLogo) { $LogoPath = $defaultLogo }
 }
 
 # Tipografia Inter (estatica, pesos Regular/Medium/Bold del Manual), cargada desde los

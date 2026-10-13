@@ -165,8 +165,8 @@ python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mos
   "Arial Bold" del sistema y la de PowerShell en "Segoe UI" — ver
   [`okf/identidad-corporativa.md`](../../okf/identidad-corporativa.md).
 
-En ambos modos, redacta también el **texto de créditos/pie de foto** (una frase corta describiendo la imagen,
-y si aplica, créditos del autor de la foto).
+En ambos modos, redacta también el **pie de foto** (una frase corta describiendo la imagen) y los **créditos**
+(autor o fuente de la foto, si aplica): en el CMS son dos campos distintos.
 
 ## Paso 4 — Guardar la noticia y publicarla en la web
 
@@ -187,7 +187,8 @@ caracteres especiales, palabras separadas por guiones). Dentro de esa carpeta gu
 
   ## Imagen
   Archivo: imagen-1200x800.png
-  Créditos / pie de foto: <texto de créditos>
+  Pie de foto: <descripción breve de la imagen>
+  Créditos: <autor o fuente de la imagen>
 
   ## Publicación en la web
   URL: <pendiente — se rellena cuando la noticia esté publicada>
@@ -196,24 +197,54 @@ caracteres especiales, palabras separadas por guiones). Dentro de esa carpeta gu
 - El archivo de imagen final (`imagen-1200x800.png`, generado en el Paso 3).
 
 Muestra en el chat, listos para copiar/pegar, los cuatro campos del formulario del CMS en este orden:
-**Título**, **Texto intro**, **Texto completo**, y la ruta del **archivo de imagen** junto con su **texto de
-créditos**, además de la categoría y la etiqueta (`categoriaCMS`, `etiquetaCMS`). Si hay sesión de navegador
-(ver [`okf/navegador.md`](../../okf/navegador.md)), puedes rellenar el formulario, pero el clic de publicar es
-del usuario (ver [`okf/web-cms.md`](../../okf/web-cms.md)).
+**Título**, **Texto intro**, **Texto completo**, y la ruta del **archivo de imagen** junto con su **pie de
+foto** y sus **créditos**, además de la categoría y la etiqueta (`categoriaCMS`, `etiquetaCMS`).
 
-Termina esta fase pidiendo al usuario que publique la noticia en la web y te pase su **URL** (en
-`urjc.es/<slugCMS>/...`) para preparar las redes. Indica dónde ha quedado el log. No redactes todavía los
-textos de redes.
+Después rellena el formulario del CMS con el script, que hace todo el recorrido sin que tengas que decidir nada
+(ver [`okf/web-cms.md`](../../okf/web-cms.md) y [`okf/navegador.md`](../../okf/navegador.md)):
+
+```bash
+bash "<ruta-al-skill>/scripts/cms/rellenar-cms.sh" "<carpeta-noticia>" "<ruta del escuela.json>"
+```
+
+- Necesita la configuración personal del usuario, `~/.config/noticia-urjc/usuario.json` (no es de ninguna
+  Escuela; ver [`usuario.ejemplo.json`](../../config/usuario.ejemplo.json)): su **cuenta de la URJC con permiso
+  de editor de la web de la Escuela** (no tiene por qué ser la del cargo), su perfil de Chrome
+  (`navegador.perfil`, `~/chrome-<parte local de la cuenta>`) y un puerto CDP fijo (`navegador.puerto`). Si no
+  existe, pregunta al usuario con qué cuenta edita la web, propón perfil y puerto y guárdalo.
+- El script abre la ventana de ese perfil si no está abierta, entra por `eris.urjc.es/<slugCMS>` hasta el
+  formulario, lo rellena desde `noticia.md`, comprueba lo que ha quedado e imprime un resumen. Nunca pulsa
+  Guardar ni Cerrar.
+- Si no hay sesión, espera hasta 5 minutos a que el usuario inicie sesión en la ventana: díselo. No teclees
+  credenciales.
+- Solo si sale con error, interpreta el mensaje: 2 = falta la VPN de la Universidad; 3 = no se inició sesión a
+  tiempo; 4 = la cuenta de ese perfil no tiene permisos de editor; 5 = la web no muestra lo esperado (mira la
+  ventana); 6 = el formulario no quedó como se esperaba (categoría o etiqueta inexistente, o un campo vacío).
+  Si el script no puede ejecutarse (sin Node.js, Windows), da los campos para que el usuario los pegue a mano.
+
+Termina esta fase pidiendo al usuario que revise el formulario y pulse **Guardar** y después **Cerrar**: con
+«Publicado: Sí» (el valor por defecto del CMS), Guardar publica la noticia y le da URL, pero no aparece en la
+portada de la Escuela hasta que se cierra el formulario. Indica dónde ha quedado el log. No redactes todavía
+los textos de redes.
 
 ## Paso 5 — Textos para redes sociales, con la URL de la noticia
 
-Empieza cuando el usuario te dé la URL de la noticia publicada, en esta conversación o en otra. Si es en otra,
-busca la carpeta de la noticia en `carpetaLog` (la más reciente sin `redes-sociales.md`, o la que corresponda
-al título) y lee su `noticia.md`: los textos de redes salen de los mismos hechos.
+Empieza cuando el usuario diga que ha guardado y cerrado la noticia (en esta conversación o en otra; si es en
+otra, busca la carpeta de la noticia en `carpetaLog`: la más reciente cuya URL en `noticia.md` siga pendiente,
+o la que corresponda al título). Los textos de redes salen de los mismos hechos que `noticia.md`.
 
-1. Comprueba que la URL está publicada: descárgala y confirma que responde y que el título coincide con el de
-   `noticia.md`. Si no carga o es de otra noticia, díselo al usuario antes de seguir.
-2. Anota la URL en la sección «Publicación en la web» de `noticia.md`.
+1. Busca tú la URL, sin pedírsela al usuario:
+
+   ```bash
+   python3 "<ruta-al-skill>/scripts/cms/buscar-url-noticia.py" "<carpeta-noticia>" "<ruta del escuela.json>"
+   ```
+
+   El script busca la noticia por su título en la portada de la Escuela y en sus páginas de actualidad,
+   comprueba que la página responde y que el título coincide, y anota la URL en «Publicación en la web» de
+   `noticia.md`. Solo si no la encuentra (código de salida 1), pregunta al usuario: lo más habitual es que no
+   haya pulsado **Cerrar** después de **Guardar**, o que la noticia no se guardara publicada.
+2. Si el usuario te da la URL a mano, comprueba igualmente que responde y que el título coincide, y anótala en
+   `noticia.md`.
 3. Redacta un texto específico para cada red (LinkedIn, X, BlueSky e Instagram) a partir de los hechos del
    Paso 1 y del texto completo del Paso 2, con el enlace a esa URL. No copies literalmente el texto intro en
    las cuatro redes: cada una tiene su propio tono, longitud y convenciones.
@@ -232,12 +263,51 @@ excepción: usa un enlace provisional a la fuente o al evento y, al final, recu�
 por la URL de la noticia en los cuatro textos (y en Buffer, si quedaron allí como borrador) en cuanto se
 publique.
 
-### Publicar el borrador en Buffer
+### Dejar los borradores en Buffer
 
-Si el MCP de Buffer está configurado (ver [`okf/buffer.md`](../../okf/buffer.md)), puedes dejar cada texto como
-**borrador** en la cola de Buffer, en el canal correspondiente, adjuntando la imagen si aplica. No lo programes
-ni lo publiques — ese paso es de la persona. Si el MCP no está disponible, deja los cuatro textos en el log
-(Paso 6) para que el usuario los copie y pegue a mano en Buffer o en cada red.
+Con un procedimiento fijo, sin decidir nada por tu cuenta (detalles en [`okf/buffer.md`](../../okf/buffer.md)):
+
+1. **Guarda antes `redes-sociales.md`** con la estructura del Paso 6: el plan sale de ese fichero.
+2. **Si hay vídeo** (p. ej. un reel de una organización), súbelo al OneDrive **del usuario** (la cuenta de su
+   `usuario.json`, con el mismo navegador que el CMS) para tener una URL de descarga directa pública, que es lo
+   que Buffer necesita:
+
+   ```bash
+   bash "<ruta-al-skill>/scripts/buffer/subir-onedrive.sh" "<ruta del vídeo>"
+   ```
+
+   Imprime un JSON con la URL `descarga`. Si no hay vídeo, sáltate este paso.
+3. **Genera el plan**:
+
+   ```bash
+   python3 "<ruta-al-skill>/scripts/buffer/preparar-buffer.py" "<carpeta-noticia>" "<ruta del escuela.json>" [--video "<descarga>"]
+   ```
+
+   Imprime (y guarda en `buffer-plan.json`) una entrada por red con los argumentos exactos de `create_post`, y
+   las redes omitidas con su motivo.
+4. **Llama a `create_post` una vez por cada entrada de `publicaciones`, con su `create_post` tal cual.** Todas
+   llevan `saveToDraft: true`: quedan como **borrador**. No las programes ni las publiques — ese paso es de la
+   persona. No añadas `mode` ni `dueAt`.
+5. Anota en `redes-sociales.md` el id de cada borrador creado y, si lo hay, la URL del vídeo.
+
+Solo interpreta algo si un paso falla:
+
+- Falta el bloque `buffer` en `escuela.json`: llama a `get_account` y `list_channels` del MCP de Buffer, guarda
+  `buffer.organizacion` y `buffer.canales` (`linkedin`, `twitter`, `instagram`, `bluesky`: el id de cada canal
+  conectado) y repite el paso 3. Si hay varias organizaciones, pregunta cuál.
+- Falta `usuario.json`: el mismo caso que en el Paso 4 (pregunta la cuenta del usuario y guárdala). El bloque
+  `onedrive` es opcional: por defecto, `https://urjc-my.sharepoint.com` y la carpeta `noticia-urjc`.
+- `subir-onedrive.sh` sale con 3 (sin sesión: pide al usuario que inicie sesión en la ventana), 4 (la
+  organización no permite vínculos para cualquier persona), 5 (falló la subida) o 6 (la URL no devuelve el
+  fichero): díselo al usuario con el mensaje del script.
+- `preparar-buffer.py` dice que un texto se pasa del límite: acórtalo en `redes-sociales.md` y repítelo.
+- `create_post` devuelve un error: enséñaselo al usuario; no reintentes con otros argumentos.
+
+Si las herramientas de Buffer no están disponibles, deja los textos en el log para que el usuario los pegue a
+mano, y dile cómo conectarlo: `/mcp` → servidor **buffer** del plugin → *Authenticate* e iniciar sesión en Buffer
+con la cuenta de la Escuela (OAuth, sin clave); la alternativa con clave de API está en
+[`okf/buffer.md`](../../okf/buffer.md). Usa las herramientas de cualquier servidor de Buffer que esté conectado
+(el del plugin o uno propio del usuario, p. ej. `buffer-api`).
 
 ## Paso 6 — Guardar los textos de redes y resumen final
 

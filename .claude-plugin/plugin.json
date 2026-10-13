@@ -2,7 +2,10 @@
   "name": "noticia-urjc",
   "displayName": "Noticia URJC",
   "description": "Redacta noticias para la web de una Escuela/Facultad de la URJC (CMS Joomla/K2) y sus versiones para LinkedIn, X, BlueSky e Instagram, con generación de imagen institucional y publicación en Buffer vía MCP.",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "author": {
+    "name": "Juan Manuel Serrano"
+  },
   "keywords": [
     "urjc",
     "noticias",
@@ -11,13 +14,5 @@
     "buffer",
     "comunicación"
   ],
-  "license": "UNLICENSED",
-  "userConfig": {
-    "buffer_api_key": {
-      "type": "string",
-      "title": "Clave de API de Buffer",
-      "description": "Clave personal generada en Buffer, Settings → Integrations (o inicia sesión por OAuth si lo prefieres y configura el servidor MCP de Buffer aparte, sin esta clave — ver okf/buffer.md).",
-      "sensitive": true
-    }
-  }
+  "license": "MIT"
 }
