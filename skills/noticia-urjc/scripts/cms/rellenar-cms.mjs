@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Rellena el formulario "Editar ítem" del CMS (Joomla/K2) de la web de una Escuela con el contenido de
-// noticia.md, sobre tu ventana de Chrome ya abierta en el puerto CDP de usuario.json (navegador.puerto). NO pulsa Guardar ni
+// noticia.md, sobre tu ventana del navegador (Chromium) ya abierta en el puerto CDP de usuario.json (navegador.puerto). NO pulsa Guardar ni
 // Cerrar: en este CMS "Publicado" viene en "Sí", así que Guardar publica, y ese clic es de la persona.
 // Hace falta pulsar Guardar y después Cerrar: solo con Guardar el ítem ya tiene URL, pero no aparece en la
 // portada de la Escuela hasta que se cierra el formulario.
@@ -71,7 +71,7 @@ async function esperarDestino(page, destino) {
     const texto = await page.locator('body').innerText().catch(() => '');
     if (/Permisos inadecuados/i.test(texto)) fail(4, 'la cuenta de esta ventana no tiene permisos para la Intranet de la URJC (no es editora de la web)');
     if (!avisado && /identifica\.urjc\.es|login\.microsoftonline\.com/.test(url) && /Credenciales|Iniciar sesión|Sign in/i.test(texto)) {
-      console.log('ESPERANDO: no hay sesión iniciada. Inicia sesión en la ventana de Chrome (hasta 5 minutos)…');
+      console.log('ESPERANDO: no hay sesión iniciada. Inicia sesión en la ventana del navegador (hasta 5 minutos)…');
       avisado = true;
     }
     await page.waitForTimeout(1500);

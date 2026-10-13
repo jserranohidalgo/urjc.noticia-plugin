@@ -1,6 +1,6 @@
 ---
 name: noticia-urjc
-description: Redacta noticias para la web de una Escuela/Facultad de la URJC siguiendo exactamente el formulario "Editar ítem" del CMS (Joomla/K2) - título, texto intro (extracto breve), texto completo e imagen 1200x800 con su pie/créditos - y además los textos equivalentes para publicar la misma noticia en LinkedIn, X, BlueSky e Instagram. Usa este skill SIEMPRE que el usuario, en su rol de coordinador de una Escuela/Facultad, pida escribir, redactar, montar o preparar una noticia/artículo para la web del centro, mencione el formulario con campos Título/Texto intro/Texto completo/Imagen del ítem, o pida publicar/adaptar una noticia para redes sociales. Se invoca explícitamente con /noticia-urjc "tema de la noticia", o con /noticia-urjc <URL de la Escuela en urjc.es> para configurar una Escuela.
+description: Redacta noticias para la web de una Escuela/Facultad de la URJC siguiendo exactamente el formulario "Editar ítem" del CMS (Joomla/K2) - título, texto intro (extracto breve), texto completo e imagen 1200x800 con su pie/créditos - y además los textos equivalentes para publicar la misma noticia en LinkedIn, X, BlueSky e Instagram. Usa este skill SIEMPRE que el usuario, en su rol de coordinador de una Escuela/Facultad, pida escribir, redactar, montar o preparar una noticia/artículo para la web del centro, mencione el formulario con campos Título/Texto intro/Texto completo/Imagen del ítem, o pida publicar/adaptar una noticia para redes sociales. Se puede invocar explícitamente con el tema de la noticia (p. ej. /noticia-urjc "tema" en Claude Code), o con la URL de una Escuela en urjc.es para configurarla.
 ---
 
 # Noticia URJC
@@ -18,9 +18,9 @@ hasta tener su URL definitiva.
 ## Configuración de la Escuela
 
 Todo lo que distingue a una Escuela de otra (siglas, kicker, nombre, slug y categoría del CMS, color de marca,
-logotipo, hashtags, carpeta del log) está en un `escuela.json` **fuera del plugin**, en
+logotipo, hashtags, carpeta del log) está en un `escuela.json` **fuera del skill**, en
 `~/.config/noticia-urjc/<slug>/escuela.json`, junto con el logotipo de la Escuela (`logo.svg` y `logo.png`).
-Así no se pierde al actualizar el plugin y puede haber una configuración por cada Escuela.
+Así no se pierde al actualizar el skill y puede haber una configuración por cada Escuela.
 
 Antes de redactar nada, decide qué Escuela usar:
 
@@ -83,8 +83,8 @@ noticia ya está publicada, redes (Pasos 5-6). Si en algún caso el usuario solo
   - **macOS/Linux**: `scripts/resize-image.py` y `scripts/generate-banner.py` (Python 3 + Pillow).
 - Antes de elegir cuál ejecutar, comprueba el sistema operativo (por ejemplo con `uname` en Bash, o mirando
   si estás operando sobre una ruta `C:\...` vs `/Users/...` o `/home/...`). En macOS/Linux no hay PowerShell
-  instalado — usa siempre la variante `.py` con la herramienta Bash; en Windows usa la variante `.ps1` con
-  la herramienta de PowerShell.
+  instalado — usa siempre la variante `.py` desde una terminal (bash/zsh); en Windows usa la variante `.ps1`
+  desde PowerShell.
 - Las variantes `.py` necesitan Pillow, y el `python3` que va primero en el PATH puede no tenerlo (hay
   equipos con varios Python instalados). Antes de usarlas, busca un intérprete que lo tenga: prueba
   `<python> -c "import PIL"` con `python3`, `/usr/local/bin/python3` y `/opt/homebrew/bin/python3`, y usa el
@@ -136,8 +136,8 @@ powershell -ExecutionPolicy Bypass -File "<ruta-al-skill>\scripts\resize-image.p
 python3 "<ruta-al-skill>/scripts/resize-image.py" --input "<ruta-foto-original>" --output "<carpeta-noticia>/imagen-1200x800.png"
 ```
 
-El script recorta centrado (sin deformar) y redimensiona a 1200x800 exactos. Tras generarla, ábrela con la
-herramienta Read (o `open` en macOS) para comprobar visualmente el encuadre antes de darla por buena — el
+El script recorta centrado (sin deformar) y redimensiona a 1200x800 exactos. Tras generarla, mírala (o ábrela
+con el visor del sistema, p. ej. `open` en macOS) para comprobar visualmente el encuadre antes de darla por buena — el
 recorte centrado puede cortar cabezas o elementos importantes si la foto original no está bien compuesta.
 
 **MODO DISEÑO** (no hay foto, se genera un banner con el título sobre fondo institucional):
@@ -209,9 +209,11 @@ bash "<ruta-al-skill>/scripts/cms/rellenar-cms.sh" "<carpeta-noticia>" "<ruta de
 
 - Necesita la configuración personal del usuario, `~/.config/noticia-urjc/usuario.json` (no es de ninguna
   Escuela; ver [`usuario.ejemplo.json`](../../config/usuario.ejemplo.json)): su **cuenta de la URJC con permiso
-  de editor de la web de la Escuela** (no tiene por qué ser la del cargo), su perfil de Chrome
-  (`navegador.perfil`, `~/chrome-<parte local de la cuenta>`) y un puerto CDP fijo (`navegador.puerto`). Si no
-  existe, pregunta al usuario con qué cuenta edita la web, propón perfil y puerto y guárdalo.
+  de editor de la web de la Escuela** (no tiene por qué ser la del cargo), un perfil de navegador para esa cuenta
+  (`navegador.perfil`, p. ej. `~/chrome-<parte local de la cuenta>`), un puerto CDP fijo (`navegador.puerto`) y,
+  opcionalmente, qué navegador de la familia Chromium usar (`navegador.aplicacion`: Chrome, Edge, Brave…; si no
+  se indica, el primero instalado). Si no existe, pregunta al usuario con qué cuenta edita la web, propón perfil
+  y puerto y guárdalo.
 - El script abre la ventana de ese perfil si no está abierta, entra por `eris.urjc.es/<slugCMS>` hasta el
   formulario, lo rellena desde `noticia.md`, comprueba lo que ha quedado e imprime un resumen. Nunca pulsa
   Guardar ni Cerrar.
@@ -304,10 +306,10 @@ Solo interpreta algo si un paso falla:
 - `create_post` devuelve un error: enséñaselo al usuario; no reintentes con otros argumentos.
 
 Si las herramientas de Buffer no están disponibles, deja los textos en el log para que el usuario los pegue a
-mano, y dile cómo conectarlo: `/mcp` → servidor **buffer** del plugin → *Authenticate* e iniciar sesión en Buffer
-con la cuenta de la Escuela (OAuth, sin clave); la alternativa con clave de API está en
-[`okf/buffer.md`](../../okf/buffer.md). Usa las herramientas de cualquier servidor de Buffer que esté conectado
-(el del plugin o uno propio del usuario, p. ej. `buffer-api`).
+mano, y dile que conecte en su agente el servidor MCP de Buffer (`https://mcp.buffer.com/mcp`), iniciando
+sesión en Buffer con la cuenta de la Escuela (OAuth, sin clave) o con una clave de API — ver
+[`okf/buffer.md`](../../okf/buffer.md) y, para los pasos concretos de cada agente, el README del repositorio. Usa
+las herramientas de cualquier servidor de Buffer que esté conectado.
 
 ## Paso 6 — Guardar los textos de redes y resumen final
 

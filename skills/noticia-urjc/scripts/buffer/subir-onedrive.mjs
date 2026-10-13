@@ -48,7 +48,7 @@ async function main() {
   while (!(await page.evaluate(() => !!window._spPageContextInfo?.webAbsoluteUrl).catch(() => false))) {
     if (Date.now() > limite) fail(3, `no hay sesión de OneDrive en ${page.url()}`);
     if (!avisado && /login\.microsoftonline\.com|identifica\.urjc\.es/.test(page.url())) {
-      console.log('ESPERANDO: inicia sesión en OneDrive en la ventana de Chrome (hasta 5 minutos)…');
+      console.log('ESPERANDO: inicia sesión en OneDrive en la ventana del navegador (hasta 5 minutos)…');
       avisado = true;
     }
     await page.waitForTimeout(1500);

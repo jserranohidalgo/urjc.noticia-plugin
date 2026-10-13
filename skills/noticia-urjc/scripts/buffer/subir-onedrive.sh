@@ -4,7 +4,7 @@
 #
 #   subir-onedrive.sh <fichero>
 #
-# macOS/Linux. Requiere Node.js, Google Chrome y python3 (solo para leer el JSON).
+# macOS/Linux. Requiere Node.js, un navegador Chromium (Chrome, Edge, Brave…) y python3 (solo para leer el JSON).
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -13,5 +13,5 @@ FICHERO="${1:?uso: subir-onedrive.sh <fichero>}"
 
 exigir_usuario
 asegurar_playwright
-asegurar_ventana "$PERFIL" "$PUERTO"
+asegurar_ventana "$PERFIL" "$PUERTO" "$APLICACION"
 PLAYWRIGHT_CORE_DIR="$NODE_DIR" exec node "$DIR/subir-onedrive.mjs" "$FICHERO" "$USUARIO_JSON"

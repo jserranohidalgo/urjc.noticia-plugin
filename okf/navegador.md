@@ -23,13 +23,15 @@ es de ninguna Escuela, no va en `escuela.json`, sino en `~/.config/noticia-urjc/
 ```json
 {
   "cuenta": "<cuenta>@urjc.es",
-  "navegador": { "perfil": "~/chrome-<cuenta>", "puerto": 9223 },
+  "navegador": { "aplicacion": "Google Chrome", "perfil": "~/chrome-<cuenta>", "puerto": 9223 },
   "onedrive": { "sitio": "https://urjc-my.sharepoint.com", "carpeta": "noticia-urjc" }
 }
 ```
 
-El perfil se deriva de la cuenta (`~/chrome-<parte local>`) y el puerto es cualquiera libre, fijo para ese
-perfil. Los scripts [`rellenar-cms.sh`](../skills/noticia-urjc/scripts/cms/rellenar-cms.sh) y
+El perfil se deriva de la cuenta (p. ej. `~/chrome-<parte local>`) y el puerto es cualquiera libre, fijo para
+ese perfil. `aplicacion` es opcional: cualquier navegador de la familia Chromium (en macOS, el nombre de la
+aplicación, p. ej. «Microsoft Edge» o «Brave Browser»; en Linux, el ejecutable, p. ej. `chromium`); si no se
+indica, se usa el primero instalado (Chrome, Edge, Brave, Chromium, Vivaldi, Opera). Los scripts [`rellenar-cms.sh`](../skills/noticia-urjc/scripts/cms/rellenar-cms.sh) y
 [`subir-onedrive.sh`](../skills/noticia-urjc/scripts/buffer/subir-onedrive.sh) usan estos valores:
 reutiliza la ventana si el puerto ya responde y, si no, la abre **con ventana** con ese perfil y ese puerto, y
 se engancha a ella por CDP con `playwright-core` (que instala la primera vez en `~/.cache/noticia-urjc/node`).

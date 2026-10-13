@@ -10,24 +10,26 @@ Gestor centralizado de redes sociales. A diferencia de la web del CMS (que se op
 [`navegador.md`](navegador.md)), Buffer publica un **servidor MCP remoto y oficial**: el propio servicio expone
 un canal de agente de primera clase, sin necesidad de automatizar un navegador ni de una sesión dedicada.
 
-Este plugin lo registra en [`.mcp.json`](../.mcp.json) apuntando a `https://mcp.buffer.com/mcp`, sin credenciales (OAuth).
+El servidor es `https://mcp.buffer.com/mcp` (HTTP). Cualquier agente compatible con MCP puede usarlo; cómo se
+registra depende del agente (en Claude Code lo registra el propio plugin, en [`.mcp.json`](../.mcp.json); para
+los demás, ver el README del repositorio).
 
 ## Autenticación
 
 Dos vías, ninguna pasa por el SSO de la Universidad — es un proveedor de identidad propio de Buffer:
 
-- **OAuth** — la vía por defecto de este plugin y la que documenta Buffer en su
-  [guía para Claude](https://developers.buffer.com/guides/integrations/claude.html). El servidor de
-  [`.mcp.json`](../.mcp.json) no lleva credenciales: se autentica desde Claude Code con `/mcp` → *buffer* →
-  *Authenticate*, iniciando sesión en Buffer con la cuenta de la Escuela y aprobando el acceso. Claude Code
-  guarda el permiso; no hay que copiar nada. Si caduca, se repite el mismo paso.
-- **API key personal** — alternativa, para quien prefiera una clave con nombre y caducidad. Se genera en
-  **https://publish.buffer.com/settings/api** (*Settings → API*), copiándola en el momento porque normalmente
-  solo se muestra una vez, y se registra como servidor propio del usuario:
-  `claude mcp add --scope user --transport http buffer-api https://mcp.buffer.com/mcp --header "Authorization: Bearer <clave>"`.
-  Si ese servidor falla con un 401 («Invalid or expired token»), la clave está mal copiada o ha caducado.
+- **OAuth** — la vía por defecto: el servidor se registra sin credenciales y, la primera vez, el agente abre
+  Buffer en el navegador para iniciar sesión con la cuenta de la Escuela y aprobar el acceso. El agente guarda
+  el permiso; no hay que copiar nada. Si caduca, se repite el inicio de sesión. Es la vía que documenta Buffer
+  (p. ej. en su [guía para Claude](https://developers.buffer.com/guides/integrations/claude.html)).
+- **API key personal** — alternativa, para agentes sin OAuth para MCP o para quien prefiera una clave con nombre
+  y caducidad. Se genera en **https://publish.buffer.com/settings/api** (*Settings → API*), copiándola en el
+  momento porque normalmente solo se muestra una vez, y se registra el mismo servidor con la cabecera
+  `Authorization: Bearer <clave>`. Si falla con un 401 («Invalid or expired token»), la clave está mal copiada
+  o ha caducado.
 
-Basta con una de las dos: el skill usa las herramientas del servidor de Buffer que esté conectado.
+Basta con una de las dos: el skill usa las herramientas del servidor de Buffer que esté conectado. Los comandos
+concretos para registrarlo en cada agente están en el README del repositorio.
 
 ## Capacidades expuestas
 
