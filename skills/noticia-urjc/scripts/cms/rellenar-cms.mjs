@@ -34,7 +34,9 @@ function leerNoticia(dir) {
   const titulo = md.match(/^# (.+)$/m)?.[1].trim();
   const seccion = h => md.split(`\n## ${h}\n`)[1]?.split('\n## ')[0].trim();
   const imagen = seccion('Imagen') || '';
-  const linea = k => imagen.match(new RegExp(`^${k}:\\s*(.+)$`, 'mi'))?.[1].trim();
+  const video = seccion('Vídeo') || '';
+  const lineaDe = (texto, k) => texto.match(new RegExp(`^${k}:\\s*(.+)$`, 'mi'))?.[1].trim();
+  const linea = k => lineaDe(imagen, k);
   const intro = seccion('Texto intro');
   const completo = seccion('Texto completo');
   if (!titulo || !intro || !completo) fail(1, `noticia.md incompleto en ${dir} (título, Texto intro o Texto completo)`);
@@ -46,6 +48,12 @@ function leerNoticia(dir) {
     imagen: fs.existsSync(archivo) ? archivo : null,
     pie: linea('Pie de foto') || linea('Créditos / pie de foto') || '',
     creditos: linea('Créditos') || '',
+    // Sección opcional «Vídeo»: URL de descarga directa pública (p. ej. la de subir-onedrive.sh), pie y créditos.
+    video: /^https?:\/\//.test(lineaDe(video, 'URL') || '') ? {
+      url: lineaDe(video, 'URL'),
+      pie: lineaDe(video, 'Pie de vídeo') || '',
+      creditos: lineaDe(video, 'Créditos') || '',
+    } : null,
   };
 }
 
@@ -70,7 +78,8 @@ async function esperarDestino(page, destino) {
     if (destino.test(url)) return;
     const texto = await page.locator('body').innerText().catch(() => '');
     if (/Permisos inadecuados/i.test(texto)) fail(4, 'la cuenta de esta ventana no tiene permisos para la Intranet de la URJC (no es editora de la web)');
-    if (!avisado && /identifica\.urjc\.es|login\.microsoftonline\.com/.test(url) && /Credenciales|Iniciar sesión|Sign in/i.test(texto)) {
+    const loginJoomla = /eris\.urjc\.es\/login/.test(url) && await page.locator('form[action*="task=user.login"] input[name=password]').count();
+    if (!avisado && ((/identifica\.urjc\.es|login\.microsoftonline\.com/.test(url) && /Credenciales|Iniciar sesión|Sign in/i.test(texto)) || loginJoomla)) {
       console.log('ESPERANDO: no hay sesión iniciada. Inicia sesión en la ventana del navegador (hasta 5 minutos)…');
       avisado = true;
     }
@@ -142,6 +151,18 @@ async function main() {
     await page.getByRole('link', { name: 'Contenido' }).first().click();
   }
 
+  // Vídeo (pestaña de medios → «Incrustar»): un <video> HTML5 con la URL de descarga directa. «Subir» tiene un
+  // límite de 20 MB y «URL remota» (AllVideos) reconoce el formato por la extensión, que estas URL no tienen.
+  if (noticia.video) {
+    const html = `<video controls playsinline preload="metadata" style="display:block;width:100%;max-width:360px;margin:0 auto;" src="${noticia.video.url}">Tu navegador no puede reproducir este vídeo.</video>`;
+    await page.locator('a[href="#k2TabMedia"]').click();
+    await page.locator('a[href="#k2MediaTab4"]').click();
+    await page.fill('textarea[name=embedVideo]', html);
+    await page.fill('input[name=video_caption]', noticia.video.pie);
+    await page.fill('input[name=video_credits]', noticia.video.creditos);
+    await page.getByRole('link', { name: 'Contenido' }).first().click();
+  }
+
   const estado = await page.evaluate(() => ({
     titulo: document.getElementById('title').value,
     categoria: document.getElementById('catid').selectedOptions[0]?.text.replace(/^[-\s]+/, '').trim(),
@@ -153,10 +174,13 @@ async function main() {
     imagen: document.querySelector('input[name=image]').files[0]?.name || null,
     pie: document.querySelector('input[name=image_caption]').value,
     creditos: document.querySelector('input[name=image_credits]').value,
+    video: document.querySelector('textarea[name=embedVideo]').value.match(/src="([^"]+)"/)?.[1] || null,
+    pieVideo: document.querySelector('input[name=video_caption]').value,
   }));
   const esperado = estado.titulo === noticia.titulo && estado.categoria === escuela.categoriaCMS
     && estado.etiquetas.includes(escuela.etiquetaCMS) && estado.parrafosCompleto > 0
-    && (!noticia.imagen || estado.imagen === path.basename(noticia.imagen));
+    && (!noticia.imagen || estado.imagen === path.basename(noticia.imagen))
+    && (!noticia.video || estado.video === noticia.video.url);
 
   await page.bringToFront();
   await page.evaluate(() => window.scrollTo(0, 0));

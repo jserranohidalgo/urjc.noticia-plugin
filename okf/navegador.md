@@ -37,6 +37,10 @@ reutiliza la ventana si el puerto ya responde y, si no, la abre **con ventana** 
 se engancha a ella por CDP con `playwright-core` (que instala la primera vez en `~/.cache/noticia-urjc/node`).
 No hace falta registrar ningún servidor MCP de navegador.
 
+Antes de usarla, [`comprobar.sh`](../skills/noticia-urjc/scripts/comprobar.sh) comprueba la VPN y las sesiones
+(intranet de la web y OneDrive) sin esperar a que nada falle, y deja la ventana en la pantalla de login si hay que
+entrar.
+
 ## Montaje (una vez)
 
 1. **Perfil dedicado**: un directorio de perfil propio para esta identidad (no el perfil habitual de la
@@ -67,6 +71,7 @@ administración"), que es la que dispara el ida y vuelta con el SSO y se resuelv
 | Síntoma | Causa probable | Qué hacer |
 |---|---|---|
 | `eris.urjc.es` no resuelve (`ERR_NAME_NOT_RESOLVED`) | falta la VPN de la Universidad | conectar la VPN |
+| `eris.urjc.es/login` con «Por favor, identifíquese primero» | la sesión de Joomla ha caducado y el SSO no ha entrado solo | iniciar sesión en la ventana |
 | «Permisos inadecuados para la aplicación solicitada: URJC Intranet» | la cuenta del perfil no es editora de la web | usar el perfil de la cuenta editora (`usuario.json`) |
 | No se pinta el formulario o el menú | ventana pequeña | relanzar con tamaño amplio |
 | La página da menos de lo esperado, sin aviso | se entró por una URL interna en vez de por la puerta pública | entrar por la ruta de acceso del servicio |

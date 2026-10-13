@@ -8,7 +8,8 @@ nada; todas quedan como borrador (saveToDraft), nunca programadas ni publicadas.
 Reglas que aplica:
 - Texto: el de la sección de cada red en redes-sociales.md, sin la línea «(caracteres: …)». Comprueba otra vez
   los límites de X (280, URL = 23) y BlueSky (300, URL con su longitud real).
-- Vídeo (--video, URL de descarga directa pública, p. ej. la de subir-onedrive.sh): se adjunta en LinkedIn, X e
+- Vídeo (--video, o si no la URL de la sección «Vídeo» de noticia.md; URL de descarga directa pública, p. ej. la
+  de subir-onedrive.sh): se adjunta en LinkedIn, X e
   Instagram (como reel, también en el feed); en BlueSky solo si pesa 100 MB o menos.
 - Sin vídeo: LinkedIn, X y BlueSky van con el enlace de la noticia (tarjeta de vista previa); Instagram, que
   exige imagen o vídeo, lleva la imagen publicada de la noticia en la web (o --imagen), con el pie de foto como
@@ -86,6 +87,10 @@ def main():
     noticia_md = open(os.path.join(a.carpeta, "noticia.md"), encoding="utf-8").read()
     url_noticia = re.search(r"^URL:\s*(https?://\S+)", noticia_md, re.M)
     url_noticia = url_noticia.group(1) if url_noticia else None
+    if not a.video:
+        # El vídeo de la noticia, si lo hay (sección «Vídeo» de noticia.md, la misma URL que usa la web).
+        m = re.search(r"^## Vídeo\n(?:.*\n)*?URL:\s*(https?://\S+)", noticia_md, re.M)
+        a.video = m.group(1) if m else None
     pie = (re.search(r"^Pie de foto:\s*(.+)$", noticia_md, re.M) or re.search(r"^# (.+)$", noticia_md, re.M)).group(1).strip()
 
     video_bytes = None

@@ -38,6 +38,15 @@ Detalles del formulario que conviene saber (comprobados en `eris.urjc.es/nuevo-a
   Cerrar**. Hay que pulsar los dos, en ese orden.
 - El texto intro y el texto completo son dos editores JCE separados (`introtext`, `fulltext`); la categoría y
   las etiquetas son desplegables envueltos por Chosen.
+- **Vídeo**: va en el campo de vídeo del artículo (pestaña de medios, «Fuente multimedia»), no en el texto; K2
+  lo muestra en su propio bloque, con su pie y sus créditos. De sus cuatro opciones:
+  - **Subir** admite como máximo **20 MB**: no sirve para un vídeo de redes típico.
+  - **URL remota** usa el reproductor AllVideos, que reconoce el formato por la extensión del fichero; una URL
+    de descarga de OneDrive (`download.aspx?share=…`) no la tiene.
+  - **Servicio de terceros** (YouTube, Vimeo…) solo si el vídeo ya está allí.
+  - **Incrustar** acepta HTML: es la que se usa, con un `<video controls>` que apunta a la URL de descarga
+    directa pública del vídeo en OneDrive (ver [`buffer.md`](buffer.md), «Adjuntos»). Comprobado que esa URL
+    se reproduce desde urjc.es como `<video>` HTML5.
 
 ## Cómo se llega al formulario
 
@@ -53,6 +62,11 @@ navegador de [`navegador.md`](navegador.md). La ruta que funciona, y que sigue e
    emergente con `eris.urjc.es/nuevo-articulo`, el formulario «Editar ítem».
 4. En **Ayuda → Manual de administración** (botón *Ver*) está el manual de usuario del formulario, con detalle.
 
+**La sesión de la intranet caduca.** Al volver a pulsar Intranet, el SSO normalmente entra solo; si no, `eris`
+muestra su propio formulario de login de Joomla («Por favor, identifíquese primero», con usuario y contraseña) y
+hay que iniciar sesión otra vez. [`comprobar.sh`](../skills/noticia-urjc/scripts/comprobar.sh) lo detecta antes
+de empezar.
+
 Por `www.urjc.es` (Intranet → Panel) el panel también carga, pero **«Publicar» no llega a abrir el formulario**:
 vuelve a mostrar el índice. Hay que ir por `eris.urjc.es`.
 
@@ -63,6 +77,11 @@ e imagen —, pero **no pulsar Guardar ni Cerrar**: con «Publicado: Sí», Guar
 corresponde a quien coordina la Escuela, con la ventana visible para revisarlo antes. Si la ventana del
 formulario se cierra sin guardar, se pierde lo rellenado.
 
+**La web pública (`www.urjc.es`) sirve una caché**: lo recién guardado (una noticia nueva, un vídeo añadido) se
+ve antes en `eris.urjc.es`, que es el mismo sitio sin caché, y tarda un rato en llegar a `www`. Para comprobar un
+cambio, míralo en `eris`. Comprobado también que la etiqueta `<video>` del campo de vídeo se conserva al guardar,
+y que la plantilla de la ETSII muestra el bloque de vídeo al final, después del texto completo y las etiquetas.
+
 Una vez guardada y cerrada, la URL de la noticia se encuentra sin preguntar a nadie con
 [`buscar-url-noticia.py`](../skills/noticia-urjc/scripts/cms/buscar-url-noticia.py), que la busca por título
-en la portada de la Escuela y en sus páginas de actualidad.
+en la portada de la Escuela y en sus páginas de actualidad (en `www` y, si aún no está en la caché, en `eris`).

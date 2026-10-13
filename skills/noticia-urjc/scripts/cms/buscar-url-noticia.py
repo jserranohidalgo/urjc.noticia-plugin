@@ -8,6 +8,10 @@ Joomla/K2 publica cada ítem en .../<id>-<alias>, donde el alias es el título e
 guiones. Se busca un enlace con ese alias (o con el título como texto) en la portada de la Escuela
 (urjc.es/<slugCMS>) y, si no está, en las páginas de actualidad enlazadas desde ella.
 
+La web pública (www.urjc.es) sirve una caché y una noticia recién guardada puede tardar en aparecer en ella; si
+no se encuentra allí, se busca en eris.urjc.es (el mismo sitio sin caché, accesible con la VPN) y se devuelve
+igualmente la URL pública, que es la que se enlaza en las redes.
+
 Solo usa la biblioteca estándar. Imprime la URL; sale con código 1 si no la encuentra (en ese caso, pídesela
 al usuario: puede que la noticia no se haya guardado, que no se haya cerrado el formulario o que aún no
 aparezca en los listados).
@@ -66,6 +70,26 @@ def find(page, base, title):
     return None
 
 
+def buscar_en(base, slug, title):
+    home_url = f"{base}/{slug}"
+    home = fetch(home_url)
+    url = find(home, home_url, title)
+    if url:
+        return url
+    # Páginas de actualidad enlazadas desde la portada (p. ej. /actualidad-etsii).
+    candidates = []
+    for u, _ in links(home, home_url):
+        p = urllib.parse.urlparse(u)
+        if p.netloc.endswith("urjc.es") and re.fullmatch(r"/actualidad[^/]*", p.path.rstrip("/")):
+            if u not in candidates:
+                candidates.append(u)
+    for c in candidates:
+        url = find(fetch(c), c, title)
+        if url:
+            return url
+    return None
+
+
 def main():
     if len(sys.argv) != 3:
         raise SystemExit("uso: buscar-url-noticia.py <carpeta-noticia> <escuela.json>")
@@ -74,26 +98,27 @@ def main():
     title = re.search(r"^# (.+)$", md, re.M).group(1).strip()
     slug = json.load(open(sys.argv[2], encoding="utf-8"))["slugCMS"]
 
-    home_url = f"{BASE}/{slug}"
-    home = fetch(home_url)
-    url = find(home, home_url, title)
+    url = None
+    for base in (BASE, "https://eris.urjc.es"):
+        try:
+            url = buscar_en(base, slug, title)
+        except OSError:
+            continue  # eris sin VPN, o un fallo de red: se prueba la siguiente
+        if url:
+            url = url.replace("https://eris.urjc.es", BASE)
+            break
     if not url:
-        # Páginas de actualidad enlazadas desde la portada (p. ej. /actualidad-etsii).
-        candidates = []
-        for u, _ in links(home, home_url):
-            p = urllib.parse.urlparse(u)
-            if p.netloc.endswith("urjc.es") and re.fullmatch(r"/actualidad[^/]*", p.path.rstrip("/")):
-                if u not in candidates:
-                    candidates.append(u)
-        for c in candidates:
-            url = find(fetch(c), c, title)
-            if url:
-                break
-    if not url:
-        print(f"No se encuentra «{title}» en {home_url} ni en sus páginas de actualidad", file=sys.stderr)
+        print(f"No se encuentra «{title}» en {BASE}/{slug} ni en eris.urjc.es/{slug}, ni en sus páginas de actualidad",
+              file=sys.stderr)
         sys.exit(1)
 
-    page_title = clean(re.search(r"<title>(.*?)</title>", fetch(url), re.S).group(1))
+    # La página pública puede no estar aún en la caché de www: si no responde con el título, se comprueba en eris.
+    try:
+        page_title = clean(re.search(r"<title>(.*?)</title>", fetch(url), re.S).group(1))
+    except (OSError, AttributeError):
+        page_title = ""
+    if not page_title.startswith(title):
+        page_title = clean(re.search(r"<title>(.*?)</title>", fetch(url.replace(BASE, "https://eris.urjc.es")), re.S).group(1))
     if not page_title.startswith(title):
         print(f"La URL encontrada no coincide: {url} («{page_title}»)", file=sys.stderr)
         sys.exit(1)

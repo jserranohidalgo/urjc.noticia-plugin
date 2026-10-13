@@ -20,7 +20,7 @@ Para **Claude Code** hay además un plugin listo para instalar, que registra sol
 ```
 skills/noticia-urjc/
   SKILL.md                   ← el procedimiento (Agent Skills)
-  scripts/                   ← configuración desde la web y generación/recorte de imagen
+  scripts/                   ← comprobaciones previas, configuración desde la web y generación/recorte de imagen
   scripts/cms/               ← relleno del formulario del CMS y búsqueda de la URL publicada
   scripts/buffer/            ← plan de borradores para Buffer y subida de vídeos a OneDrive
   scripts/lib/               ← funciones comunes (navegador Chromium por CDP, playwright-core)

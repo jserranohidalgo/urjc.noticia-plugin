@@ -56,6 +56,25 @@ están descritos en [`config/escuela.ejemplo.json`](../../config/escuela.ejemplo
 
 Usa esos valores en todos los pasos siguientes; no asumas los de la ETSII del fichero de ejemplo.
 
+## Comprobaciones previas
+
+Nada más tener la Escuela, **antes de redactar**, comprueba todo lo que van a necesitar los pasos siguientes, para
+que el usuario arregle lo que falte (conectar la VPN, iniciar sesión…) mientras tú redactas, y no a mitad de
+camino:
+
+```bash
+bash "<ruta-al-skill>/scripts/comprobar.sh" todo "<ruta del escuela.json>"
+```
+
+Revisa la configuración, Python con Pillow, Node.js, el navegador Chromium, la VPN, la sesión en la intranet de
+la web (`eris`), la sesión en OneDrive y el bloque `buffer`. Imprime una línea por comprobación (`OK`, `FALTA`,
+`AVISO`). Si falta iniciar sesión, deja la ventana del navegador en la pantalla de login. Comprueba tú además
+que tienes disponibles las herramientas del servidor MCP de Buffer.
+
+Cuenta al usuario, de una vez, todos los `FALTA` y `AVISO` con lo que tiene que hacer, y sigue redactando
+(Pasos 1-3) mientras lo arregla. Vuelve a ejecutarlo antes de rellenar el CMS (`comprobar.sh web`, o `video` si
+hay vídeo) y antes de Buffer (`comprobar.sh redes`): la sesión de la intranet caduca y la VPN se desconecta.
+
 ## Base de conocimiento
 
 Las restricciones de cada medio —campos del CMS, límites de caracteres, estructura, tono— están en
@@ -168,6 +187,21 @@ python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mos
 En ambos modos, redacta también el **pie de foto** (una frase corta describiendo la imagen) y los **créditos**
 (autor o fuente de la foto, si aplica): en el CMS son dos campos distintos.
 
+### Vídeo (opcional)
+
+Si la noticia tiene un vídeo (p. ej. un reel que envía una organización), va en el **campo de vídeo del
+artículo**, no dentro del texto: K2 lo muestra en su propio bloque, con su pie y sus créditos. Como el CMS no
+admite subidas de más de 20 MB, el vídeo se aloja en el OneDrive **del usuario** y la web (y después Buffer)
+usan su URL de descarga directa pública:
+
+```bash
+bash "<ruta-al-skill>/scripts/buffer/subir-onedrive.sh" "<ruta del vídeo>"
+```
+
+Imprime un JSON con la URL `descarga`. Anótala en la sección «Vídeo» de `noticia.md` (Paso 4), con un pie de
+vídeo y sus créditos; el script del CMS la rellena y `preparar-buffer.py` la adjunta en las redes. El vídeo
+depende de ese fichero: no se puede borrar ni quitarle el acceso público mientras la noticia siga en la web.
+
 ## Paso 4 — Guardar la noticia y publicarla en la web
 
 Crea la carpeta de la noticia dentro de la carpeta base de noticias (`carpetaLog` de `escuela.json`),
@@ -190,9 +224,16 @@ caracteres especiales, palabras separadas por guiones). Dentro de esa carpeta gu
   Pie de foto: <descripción breve de la imagen>
   Créditos: <autor o fuente de la imagen>
 
+  ## Vídeo
+  URL: <URL de descarga directa del vídeo>
+  Pie de vídeo: <descripción breve del vídeo>
+  Créditos: <autor o fuente del vídeo>
+
   ## Publicación en la web
   URL: <pendiente — se rellena cuando la noticia esté publicada>
   ```
+
+  La sección «Vídeo» solo si hay vídeo (ver Paso 3).
 
 - El archivo de imagen final (`imagen-1200x800.png`, generado en el Paso 3).
 
@@ -270,15 +311,9 @@ publique.
 Con un procedimiento fijo, sin decidir nada por tu cuenta (detalles en [`okf/buffer.md`](../../okf/buffer.md)):
 
 1. **Guarda antes `redes-sociales.md`** con la estructura del Paso 6: el plan sale de ese fichero.
-2. **Si hay vídeo** (p. ej. un reel de una organización), súbelo al OneDrive **del usuario** (la cuenta de su
-   `usuario.json`, con el mismo navegador que el CMS) para tener una URL de descarga directa pública, que es lo
-   que Buffer necesita:
-
-   ```bash
-   bash "<ruta-al-skill>/scripts/buffer/subir-onedrive.sh" "<ruta del vídeo>"
-   ```
-
-   Imprime un JSON con la URL `descarga`. Si no hay vídeo, sáltate este paso.
+2. **El vídeo, si lo hay, ya está subido** desde la fase web (Paso 3): `preparar-buffer.py` toma su URL de la
+   sección «Vídeo» de `noticia.md`. Si el vídeo es solo para redes y no está en `noticia.md`, súbelo igual
+   con `subir-onedrive.sh` y pasa su URL con `--video`.
 3. **Genera el plan**:
 
    ```bash
