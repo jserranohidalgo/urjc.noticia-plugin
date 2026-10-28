@@ -43,6 +43,21 @@ Antes de usarla, [`comprobar.sh`](../skills/noticia-urjc/scripts/comprobar.sh) c
 (intranet de la web y OneDrive) sin esperar a que nada falle, y deja la ventana en la pantalla de login si hay que
 entrar.
 
+**La VPN se conecta sola** (desde la `0.1.6`). La de la Universidad es GlobalProtect, a demanda, y se cae a menudo;
+volver a conectarla no pide MFA, porque guarda la sesión SAML. Si `eris.urjc.es` no resuelve, `comprobar.sh` y
+`rellenar-cms.sh` llaman a [`lib/vpn/conectar.sh`](../skills/noticia-urjc/scripts/lib/vpn/conectar.sh), que pulsa
+«Connect» en el panel de GlobalProtect (con AppleScript, solo en macOS) y espera a que resuelva. Sus códigos:
+
+- 3: falta que la persona dé una vez permiso de **Accesibilidad** al terminal (Ajustes del Sistema → Privacidad y
+  seguridad → Accesibilidad);
+- 4: GlobalProtect no está abierto, no aparece el botón, o no es macOS;
+- 5: la sesión de GlobalProtect ha caducado y hay que iniciarla, con MFA;
+- 6: el túnel está arriba pero el DNS del sistema no es el de la VPN. Pasó el 2026-10-28 con Tailscale y su
+  DNS activo: Tailscale había tomado el del router con la VPN caída. Se arregló apagando Tailscale.
+
+Es una copia del programa del modelo `etsii.profesion` (`src/main/infra/vpn/`), y lo que se corrija en uno se
+lleva al otro.
+
 ## Montaje (una vez)
 
 1. **Perfil dedicado**: un directorio de perfil propio para esta identidad (no el perfil habitual de la
@@ -72,7 +87,7 @@ administración"), que es la que dispara el ida y vuelta con el SSO y se resuelv
 
 | Síntoma | Causa probable | Qué hacer |
 |---|---|---|
-| `eris.urjc.es` no resuelve (`ERR_NAME_NOT_RESOLVED`) | falta la VPN de la Universidad | conectar la VPN |
+| `eris.urjc.es` no resuelve (`ERR_NAME_NOT_RESOLVED`) | falta la VPN de la Universidad | la conectan solos `comprobar.sh` y `rellenar-cms.sh` (ver abajo); si no pueden, lo que diga su mensaje |
 | `eris.urjc.es/login` con «Por favor, identifíquese primero» | la sesión de Joomla ha caducado y el SSO no ha entrado solo | iniciar sesión en la ventana |
 | «Permisos inadecuados para la aplicación solicitada: URJC Intranet» | la cuenta del perfil no es editora de la web | usar el perfil de la cuenta editora (`usuario.json`) |
 | No se pinta el formulario o el menú | ventana pequeña | relanzar con tamaño amplio |

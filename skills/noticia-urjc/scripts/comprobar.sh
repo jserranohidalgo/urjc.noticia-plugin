@@ -65,8 +65,10 @@ VPN_OK=0
 if quiere web; then
   if python3 -c 'import socket; socket.gethostbyname("eris.urjc.es")' 2>/dev/null; then
     ok "vpn: eris.urjc.es resuelve"; VPN_OK=1
+  elif SALIDA="$(sh "$DIR/lib/vpn/conectar.sh" 2>&1)"; then
+    ok "vpn: no estaba conectada y se ha conectado ($SALIDA)"; VPN_OK=1
   else
-    falta "vpn: eris.urjc.es no resuelve; conecta la VPN de la Universidad"
+    falta "vpn: eris.urjc.es no resuelve y no se ha podido conectar sola: $SALIDA"
   fi
 fi
 

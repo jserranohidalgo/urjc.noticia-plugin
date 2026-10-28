@@ -61,6 +61,17 @@ elegir_navegador() {
   return 1
 }
 
+# asegurar_vpn: si eris.urjc.es no resuelve (falta la VPN de la Universidad), intenta conectarla con
+# vpn/conectar.sh, que pulsa «Connect» en GlobalProtect sin MFA (macOS, con permiso de Accesibilidad para el
+# terminal). Devuelve 0 si al final resuelve; si no, el mensaje de conectar.sh ya dice por qué y qué hacer.
+asegurar_vpn() {
+  local lib
+  lib="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  python3 -c 'import socket; socket.gethostbyname("eris.urjc.es")' 2>/dev/null && return 0
+  echo "Falta la VPN de la Universidad: se intenta conectar…" >&2
+  sh "$lib/vpn/conectar.sh" >&2
+}
+
 # cerrar_puerto <puerto>: cierra el navegador que escucha en ese puerto y espera a que lo suelte (y con él el
 # perfil, que si no queda bloqueado para el siguiente lanzamiento).
 cerrar_puerto() {

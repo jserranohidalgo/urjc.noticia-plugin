@@ -67,7 +67,9 @@ bash "<ruta-al-skill>/scripts/comprobar.sh" todo "<ruta del escuela.json>"
 ```
 
 Revisa la configuración, Python con Pillow, Node.js, el navegador Chromium, la VPN, la sesión en la intranet de
-la web (`eris`), la sesión en OneDrive y el bloque `buffer`. Imprime una línea por comprobación (`OK`, `FALTA`,
+la web (`eris`), la sesión en OneDrive y el bloque `buffer`. Si falta la VPN, intenta conectarla sola
+(`scripts/lib/vpn/conectar.sh`, macOS: pulsa «Connect» en GlobalProtect, que reconecta sin MFA con la sesión
+guardada), y solo si no puede lo da como `FALTA`, con el motivo. Imprime una línea por comprobación (`OK`, `FALTA`,
 `AVISO`). Si falta iniciar sesión, deja la ventana del navegador en la pantalla de login. Comprueba tú además
 que tienes disponibles las herramientas del servidor MCP de Buffer.
 
@@ -260,7 +262,9 @@ bash "<ruta-al-skill>/scripts/cms/rellenar-cms.sh" "<carpeta-noticia>" "<ruta de
   Guardar ni Cerrar.
 - Si no hay sesión, espera hasta 5 minutos a que el usuario inicie sesión en la ventana: díselo. No teclees
   credenciales.
-- Solo si sale con error, interpreta el mensaje: 2 = falta la VPN de la Universidad; 3 = no se inició sesión a
+- Solo si sale con error, interpreta el mensaje: 2 = falta la VPN de la Universidad y no se ha
+  podido conectar sola (el mensaje dice por qué: el permiso de Accesibilidad del terminal, la sesión de
+  GlobalProtect caducada, que pide MFA, o un DNS que no es el de la VPN); 3 = no se inició sesión a
   tiempo; 4 = la cuenta de ese perfil no tiene permisos de editor; 5 = la web no muestra lo esperado (mira la
   ventana); 6 = el formulario no quedó como se esperaba (categoría o etiqueta inexistente, o un campo vacío).
   Si el script no puede ejecutarse (sin Node.js, Windows), da los campos para que el usuario los pegue a mano.
@@ -288,9 +292,11 @@ o la que corresponda al título). Los textos de redes salen de los mismos hechos
    haya pulsado **Cerrar** después de **Guardar**, o que la noticia no se guardara publicada.
 2. Si el usuario te da la URL a mano, comprueba igualmente que responde y que el título coincide, y anótala en
    `noticia.md`.
-3. Redacta un texto específico para cada red (LinkedIn, X, BlueSky e Instagram) a partir de los hechos del
-   Paso 1 y del texto completo del Paso 2, con el enlace a esa URL. No copies literalmente el texto intro en
-   las cuatro redes: cada una tiene su propio tono, longitud y convenciones.
+3. Redacta un texto específico para cada red **en la que publica la Escuela** a partir de los hechos del
+   Paso 1 y del texto completo del Paso 2, con el enlace a esa URL. Las redes de la Escuela son las que tienen
+   canal en `buffer.canales` de su `escuela.json` (LinkedIn, X, BlueSky, Instagram); una red sin canal no se
+   redacta. Solo si no hay bloque `buffer`, redacta las cuatro. No copies literalmente el texto intro en
+   todas: cada una tiene su propio tono, longitud y convenciones.
 
 Las restricciones de cada red —límite de caracteres, estructura, tono, hashtags, cómo cuenta cada una el
 enlace— están en [`okf/redes-sociales.md`](../../okf/redes-sociales.md): léelas antes de escribir, incluida la
@@ -370,6 +376,6 @@ Enlace: <URL de la noticia en la web>
 <texto>
 ```
 
-Termina mostrando en el chat, listos para copiar/pegar, los cuatro textos en este orden: **LinkedIn**, **X**
-(con recuento de caracteres sobre 280), **BlueSky** (con recuento sobre 300) e **Instagram**, indicando si
+Termina mostrando en el chat, listos para copiar/pegar, los textos de las redes de la Escuela, en este orden:
+**LinkedIn**, **X** (con recuento de caracteres sobre 280), **BlueSky** (con recuento sobre 300) e **Instagram**, indicando si
 quedaron como borrador en Buffer o solo en el log, y dónde está el log completo.

@@ -47,9 +47,9 @@ techo de autonomía.
   recuento real, no a ojo.
 - A diferencia de X, BlueSky **no acorta las URLs**: el enlace cuenta con su longitud real.
 - Tono más cercano e idiomático que la web, con 2-6 emoticonos.
-- Si el canal no está conectado a Buffer (puede pasar: el plan gratuito limita a 3 canales y a veces se
-  prioriza otra red), este texto simplemente queda sin canal donde publicarse — igual se redacta, por si se
-  reconecta más adelante.
+- Como cualquier red, **solo se redacta si la Escuela publica en ella**: si tiene canal en `buffer.canales` de
+  su `escuela.json`. El plan gratuito de Buffer limita a 3 canales, y una Escuela puede haber dejado BlueSky
+  (la ETSII, desde el 7 de septiembre de 2026).
 
 ## Instagram
 
