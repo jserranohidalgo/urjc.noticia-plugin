@@ -69,13 +69,21 @@ async function pulsar(page, locator) {
   return p;
 }
 
-// Espera a que la página llegue a `destino`, dando tiempo a que la persona inicie sesión si hace falta.
+// Espera a que la página llegue a `destino`, dando tiempo a que la persona inicie sesión si hace falta, y
+// devuelve la página que ha llegado. Puede ser otra: la ventana emergente que abre un enlace a veces tarda más
+// que la espera de `pulsar`, y entonces se busca entre las pestañas (2026-10-27, «Publicar» abrió el formulario
+// en una ventana nueva pasados los 5 s, y el script siguió mirando el panel hasta rendirse).
 async function esperarDestino(page, destino) {
   const limite = Date.now() + LOGIN_WAIT_MS;
   let avisado = false;
   while (Date.now() < limite) {
     const url = page.url();
-    if (destino.test(url)) return;
+    if (destino.test(url)) return page;
+    const otra = page.context().pages().find((p) => p !== page && destino.test(p.url()));
+    if (otra) {
+      await otra.waitForLoadState('domcontentloaded');
+      return otra;
+    }
     const texto = await page.locator('body').innerText().catch(() => '');
     if (/Permisos inadecuados/i.test(texto)) fail(4, 'la cuenta de esta ventana no tiene permisos para la Intranet de la URJC (no es editora de la web)');
     const loginJoomla = /eris\.urjc\.es\/login/.test(url) && await page.locator('form[action*="task=user.login"] input[name=password]').count();
@@ -108,13 +116,13 @@ async function main() {
   }
 
   page = await pulsar(page, page.getByRole('link', { name: /^intranet$/i }).first());
-  await esperarDestino(page, /\/intranet-inicio/);
+  page = await esperarDestino(page, /\/intranet-inicio/);
 
   page = await pulsar(page, page.getByRole('link', { name: /Panel administración editores/i }));
-  await esperarDestino(page, /\/administracion-facultades/);
+  page = await esperarDestino(page, /\/administracion-facultades/);
 
   page = await pulsar(page, page.getByRole('link', { name: 'Publicar', exact: true }));
-  await esperarDestino(page, /\/nuevo-articulo/);
+  page = await esperarDestino(page, /\/nuevo-articulo/);
   await page.locator('#title').waitFor({ timeout: 20000 }).catch(() => fail(5, 'nuevo-articulo no muestra el formulario "Editar ítem"'));
   await page.waitForFunction(() => window.Joomla?.editors?.instances?.introtext && window.Joomla.editors.instances.fulltext, null, { timeout: 20000 });
 

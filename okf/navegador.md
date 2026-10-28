@@ -33,7 +33,9 @@ ese perfil. `aplicacion` es opcional: cualquier navegador de la familia Chromium
 aplicación, p. ej. «Microsoft Edge» o «Brave Browser»; en Linux, el ejecutable, p. ej. `chromium`); si no se
 indica, se usa el primero instalado (Chrome, Edge, Brave, Chromium, Vivaldi, Opera). Los scripts [`rellenar-cms.sh`](../skills/noticia-urjc/scripts/cms/rellenar-cms.sh) y
 [`subir-onedrive.sh`](../skills/noticia-urjc/scripts/buffer/subir-onedrive.sh) usan estos valores:
-reutiliza la ventana si el puerto ya responde y, si no, la abre **con ventana** con ese perfil y ese puerto, y
+reutiliza la ventana si el puerto ya responde y, si no, la abre **con ventana** con ese perfil y ese puerto. Si
+el puerto responde pero el navegador va **sin ventana** (*headless*, lanzado por otra herramienta con el mismo
+perfil), lo cierra y lo reabre con ventana: la sesión vive en el perfil y no se pierde. Después
 se engancha a ella por CDP con `playwright-core` (que instala la primera vez en `~/.cache/noticia-urjc/node`).
 No hace falta registrar ningún servidor MCP de navegador.
 

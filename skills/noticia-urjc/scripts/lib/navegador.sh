@@ -61,11 +61,32 @@ elegir_navegador() {
   return 1
 }
 
+# cerrar_puerto <puerto>: cierra el navegador que escucha en ese puerto y espera a que lo suelte (y con él el
+# perfil, que si no queda bloqueado para el siguiente lanzamiento).
+cerrar_puerto() {
+  local puerto="$1" pid
+  pid="$(lsof -nP -t -iTCP:"$puerto" -sTCP:LISTEN 2>/dev/null | head -1)"
+  [ -n "$pid" ] && kill "$pid" 2>/dev/null
+  for _ in $(seq 1 40); do
+    curl -s -m 1 "http://localhost:$puerto/json/version" >/dev/null || { sleep 1; return 0; }
+    sleep 0.5
+  done
+  echo "ERROR el navegador del puerto $puerto no se cierra" >&2
+  return 1
+}
+
 # asegurar_ventana <perfil> <puerto> [aplicacion]: reutiliza la ventana si el puerto responde; si no, abre CON
 # VENTANA el navegador (el de navegador.aplicacion o el primero Chromium instalado) con ese perfil y ese puerto
 # (la persona tiene que ver lo que pasa) y espera a que responda.
 asegurar_ventana() {
   local perfil="$1" puerto="$2" pedido="${3:-}" app
+  # Un navegador sin ventana (headless) en ese puerto, lanzado por otra herramienta con el mismo perfil, no sirve:
+  # la persona no puede iniciar sesión ni pulsar Guardar. Se cierra y se reabre con ventana; la sesión vive en
+  # el perfil y no se pierde (2026-10-27: el script esperó cinco minutos un login imposible).
+  if curl -s -m 2 "http://localhost:$puerto/json/version" | grep -q 'HeadlessChrome'; then
+    echo "AVISO el navegador del puerto $puerto está sin ventana: se cierra y se reabre con ventana, con el mismo perfil" >&2
+    cerrar_puerto "$puerto" || return 1
+  fi
   if curl -s -m 2 "http://localhost:$puerto/json/version" >/dev/null; then
     # El navegador sigue vivo pero sin ventanas (la persona las cerró): sin pestañas no hay contexto al que
     # engancharse, así que se abre una.
