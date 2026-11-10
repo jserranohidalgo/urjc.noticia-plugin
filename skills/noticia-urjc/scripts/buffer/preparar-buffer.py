@@ -99,6 +99,10 @@ def main():
         if not tipo.startswith("video/"):
             fail(f"--video no devuelve un vídeo ({tipo}): {a.video}")
     imagen = a.imagen
+    propia = [f for f in os.listdir(a.carpeta) if f.lower().startswith("imagen-instagram.")]
+    if propia and not imagen and not a.video:
+        print(f"AVISO: hay {propia[0]} en la carpeta y no se ha pasado --imagen: Instagram llevará la imagen de la web "
+              "(850x567). Súbela con subir-onedrive.sh y repite con --imagen <descarga>.", file=sys.stderr)
     if not a.video and not imagen and url_noticia:
         imagen = imagen_de_la_noticia(url_noticia)
 

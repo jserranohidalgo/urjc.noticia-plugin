@@ -186,7 +186,33 @@ python3 "<ruta-al-skill>/scripts/generate-banner.py" --title "<texto corto a mos
   "Arial Bold" del sistema y la de PowerShell en "Segoe UI" — ver
   [`okf/identidad-corporativa.md`](../../okf/identidad-corporativa.md).
 
-En ambos modos, redacta también el **pie de foto** (una frase corta describiendo la imagen) y los **créditos**
+**MODO COLLAGE** (varias fotos en una imagen: los premiados de una entrega de premios, varios momentos de un
+acto). Solo hay variante Python (Pillow):
+
+1. **Elige las fotos sin abrirlas una a una** con una hoja de contactos por carpeta:
+
+   ```bash
+   python3 "<ruta-al-skill>/scripts/hoja-contactos.py" --carpeta "<carpeta con fotos>" --salida "<hoja.jpg>"
+   ```
+
+   Mírala y elige. En una entrega de premios, una foto por premio en la que se vean el premiado, quien entrega y,
+   si se puede, la pantalla con el nombre de la empresa. Si la noticia es de todos, que el collage no favorezca a
+   uno (por ejemplo, una foto de grupo de un solo grado en un acto de siete).
+2. **Describe el collage en un JSON** (teselas con su caja, el centro `cx` y la franja `y` del recorte, y
+   logotipos superpuestos) y móntalo; el formato está en la cabecera del script:
+
+   ```bash
+   python3 "<ruta-al-skill>/scripts/collage.py" --spec "<carpeta-noticia>/collage.json" --salida "<carpeta-noticia>/imagen-1200x800.png"
+   ```
+
+   Ordena las teselas con sentido (por turnos, por grados). Si una foto no enseña el logo de quien debería
+   salir, superponlo (`logos`); el logotipo se toma del que mandó la entidad o de su web, y nunca se pone el de
+   quien ha pedido que no se proyecte. Mira el resultado antes de darlo por bueno.
+3. **Monta a la vez la versión de Instagram** (1080x1350) desde las mismas fotos originales, con otra rejilla
+   (`--salida "<carpeta-noticia>/imagen-instagram.jpg"`): ver «Imagen de Instagram» en el Paso 5. Recortar la de
+   la web no sirve: la web publica una copia de 850 px de ancho, y en un collage las fotos quedan diminutas.
+
+En todos los modos, redacta también el **pie de foto** (una frase corta describiendo la imagen) y los **créditos**
 (autor o fuente de la foto, si aplica): en el CMS son dos campos distintos.
 
 ### Vídeo (opcional)
@@ -302,10 +328,13 @@ Las restricciones de cada red —límite de caracteres, estructura, tono, hashta
 enlace— están en [`okf/redes-sociales.md`](../../okf/redes-sociales.md): léelas antes de escribir, incluida la
 verificación obligatoria de caracteres para X y BlueSky, que se hace ya con la URL definitiva.
 
-Para Instagram, si el usuario quiere el encuadre exacto del feed (Instagram recorta la imagen 1200x800 a un
-formato más cuadrado/vertical), ofrece generar una versión adicional (por ejemplo 1080x1350 o 1080x1080) con
-los mismos scripts de imagen del Paso 3, pasando `--width`/`--height` (Python) o `-Width`/`-Height`
-(PowerShell) distintos.
+**Imagen de Instagram.** Por defecto, Instagram lleva la imagen que publica la web, que es una copia de **850x567**
+(la `_XL` de K2), apaisada; el feed prefiere el 4:5 vertical (1080x1350). Si la imagen es una foto con detalle o un
+collage, prepara una versión 4:5 desde el **original**, no desde la de la web: con `resize-image` del Paso 3
+(`--width 1080 --height 1350`) para una foto, o con `collage.py` para un collage. Guárdala como
+`imagen-instagram.jpg` en la carpeta de la noticia, súbela con `subir-onedrive.sh` (como el vídeo) y pasa su URL
+de descarga con `--imagen` a `preparar-buffer.py`, que avisa si encuentra ese fichero y no se le ha dado. El
+fichero de OneDrive no se puede borrar ni quitarle el acceso hasta que Buffer haya publicado la publicación.
 
 Si el usuario pide expresamente publicar en redes antes que en la web (por ejemplo, por urgencia), es la
 excepción: usa un enlace provisional a la fuente o al evento y, al final, recuérdale que hay que sustituirlo
@@ -323,7 +352,7 @@ Con un procedimiento fijo, sin decidir nada por tu cuenta (detalles en [`okf/buf
 3. **Genera el plan**:
 
    ```bash
-   python3 "<ruta-al-skill>/scripts/buffer/preparar-buffer.py" "<carpeta-noticia>" "<ruta del escuela.json>" [--video "<descarga>"]
+   python3 "<ruta-al-skill>/scripts/buffer/preparar-buffer.py" "<carpeta-noticia>" "<ruta del escuela.json>" [--video "<descarga>"] [--imagen "<descarga de imagen-instagram.jpg>"]
    ```
 
    Imprime (y guarda en `buffer-plan.json`) una entrada por red con los argumentos exactos de `create_post`, y
@@ -331,7 +360,9 @@ Con un procedimiento fijo, sin decidir nada por tu cuenta (detalles en [`okf/buf
 4. **Llama a `create_post` una vez por cada entrada de `publicaciones`, con su `create_post` tal cual.** Todas
    llevan `saveToDraft: true`: quedan como **borrador**. No las programes ni las publiques — ese paso es de la
    persona. No añadas `mode` ni `dueAt`.
-5. Anota en `redes-sociales.md` el id de cada borrador creado y, si lo hay, la URL del vídeo.
+5. Anota en `redes-sociales.md` el id de cada borrador creado y, si lo hay, la URL del vídeo, en una sección
+   `## Buffer` al final, **no dentro de la sección de cada red**: `preparar-buffer.py` toma la sección entera como
+   el texto del post, y un id dentro de la de X la pasa del límite.
 
 Solo interpreta algo si un paso falla:
 

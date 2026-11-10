@@ -59,7 +59,10 @@ simultáneos. Sus id se guardan una vez en el bloque `buffer` del `escuela.json`
 El MCP de Buffer no sube ficheros: cada adjunto es una **URL pública de descarga directa** (no una ruta local, ni
 una página para compartir, ni un enlace que caduque). Por eso:
 
-- **Imagen**: la de la noticia ya publicada en la web (`/media/k2/items/cache/<hash>_XL.jpg`), que es pública.
+- **Imagen**: la de la noticia ya publicada en la web (`/media/k2/items/cache/<hash>_XL.jpg`), que es pública,
+  pero es una copia de **850x567**: basta para una foto sencilla y se queda corta para un collage o para el 4:5
+  del feed de Instagram. Entonces se monta `imagen-instagram.jpg` (1080x1350) desde los originales y se sube
+  como el vídeo, con `subir-onedrive.sh` (comprobado el 2026-11-10: Buffer la toma a 1080x1350).
 - **Vídeo**: se sube al OneDrive **personal de quien usa el plugin** (la cuenta de su `usuario.json`) con
   [`subir-onedrive.sh`](../skills/noticia-urjc/scripts/buffer/subir-onedrive.sh), que crea un vínculo de solo
   lectura para cualquier persona y devuelve la URL `<sitio>/personal/<cuenta>/_layouts/15/download.aspx?share=<token>`.

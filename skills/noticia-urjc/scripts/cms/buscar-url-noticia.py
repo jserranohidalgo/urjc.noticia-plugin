@@ -12,7 +12,10 @@ La web pública (www.urjc.es) sirve una caché y una noticia recién guardada pu
 no se encuentra allí, se busca en eris.urjc.es (el mismo sitio sin caché, accesible con la VPN) y se devuelve
 igualmente la URL pública, que es la que se enlaza en las redes.
 
-Solo usa la biblioteca estándar. Imprime la URL; sale con código 1 si no la encuentra (en ese caso, pídesela
+Solo usa la biblioteca estándar, y `curl` si Python no puede validar el certificado de un sitio: en macOS, el
+Python de python.org o de Homebrew no usa el llavero del sistema, y la cadena de eris.urjc.es no se completa
+(CERTIFICATE_VERIFY_FAILED); curl sí lo usa. Si un sitio no se puede leer, lo dice y por qué, en vez de
+saltárselo en silencio. Imprime la URL; sale con código 1 si no la encuentra (en ese caso, pídesela
 al usuario: puede que la noticia no se haya guardado, que no se haya cerrado el formulario o que aún no
 aparezca en los listados).
 
@@ -23,6 +26,9 @@ import html
 import json
 import os
 import re
+import shutil
+import ssl
+import subprocess
 import sys
 import time
 import unicodedata
@@ -31,6 +37,17 @@ import urllib.request
 
 BASE = "https://www.urjc.es"
 USER_AGENT = "Mozilla/5.0 (noticia-urjc; busqueda de URL de noticia)"
+
+
+def fetch_curl(url):
+    """Descarga con curl, que valida el certificado con el almacén del sistema."""
+    if not shutil.which("curl"):
+        raise OSError(f"no se puede validar el certificado de {urllib.parse.urlparse(url).netloc} con Python, "
+                      "y no hay curl para intentarlo con los certificados del sistema")
+    r = subprocess.run(["curl", "-sfL", "--max-time", "30", "-A", USER_AGENT, url], capture_output=True)
+    if r.returncode != 0:
+        raise OSError(f"curl no pudo leer {url} (código {r.returncode})")
+    return r.stdout.decode("utf-8", errors="replace")
 
 
 def fetch(url, retries=3):
@@ -45,6 +62,18 @@ def fetch(url, retries=3):
                 time.sleep(3 * (attempt + 1))
                 continue
             raise
+        except urllib.error.URLError as e:
+            if isinstance(e.reason, ssl.SSLCertVerificationError):
+                return fetch_curl(url)
+            raise
+
+
+def motivo(error):
+    """Por qué no se ha podido leer un sitio, en una frase."""
+    razon = getattr(error, "reason", error)
+    if isinstance(razon, OSError) and getattr(razon, "errno", None) in (8, -2, -3):  # nombre que no resuelve
+        return "el nombre no resuelve (¿falta la VPN de la Universidad?)"
+    return str(razon)
 
 
 def alias(text):
@@ -76,15 +105,20 @@ def buscar_en(base, slug, title):
     url = find(home, home_url, title)
     if url:
         return url
-    # Páginas de actualidad enlazadas desde la portada (p. ej. /actualidad-etsii).
-    candidates = []
+    # Páginas de actualidad: la de noticias de la Escuela (/actualidad-<slug>/noticias-<slug>), que es donde
+    # aparece antes una noticia nueva, y las de actualidad enlazadas desde la portada (p. ej. /actualidad-etsii).
+    candidates = [f"{base}/actualidad-{slug}/noticias-{slug}"]
     for u, _ in links(home, home_url):
         p = urllib.parse.urlparse(u)
-        if p.netloc.endswith("urjc.es") and re.fullmatch(r"/actualidad[^/]*", p.path.rstrip("/")):
+        if p.netloc.endswith("urjc.es") and re.fullmatch(r"/actualidad[^/]*(/noticias[^/]*)?", p.path.rstrip("/")):
             if u not in candidates:
                 candidates.append(u)
     for c in candidates:
-        url = find(fetch(c), c, title)
+        try:
+            page = fetch(c)
+        except urllib.error.HTTPError:
+            continue  # una página de actualidad que no existe en esta Escuela
+        url = find(page, c, title)
         if url:
             return url
     return None
@@ -99,17 +133,21 @@ def main():
     slug = json.load(open(sys.argv[2], encoding="utf-8"))["slugCMS"]
 
     url = None
+    fallos = []
     for base in (BASE, "https://eris.urjc.es"):
         try:
             url = buscar_en(base, slug, title)
-        except OSError:
-            continue  # eris sin VPN, o un fallo de red: se prueba la siguiente
+        except OSError as e:
+            fallos.append(f"{urllib.parse.urlparse(base).netloc}: {motivo(e)}")
+            continue  # se prueba la siguiente, pero se dice por qué
         if url:
             url = url.replace("https://eris.urjc.es", BASE)
             break
     if not url:
         print(f"No se encuentra «{title}» en {BASE}/{slug} ni en eris.urjc.es/{slug}, ni en sus páginas de actualidad",
               file=sys.stderr)
+        for f in fallos:
+            print(f"  no se pudo leer {f}", file=sys.stderr)
         sys.exit(1)
 
     # La página pública puede no estar aún en la caché de www: si no responde con el título, se comprueba en eris.
